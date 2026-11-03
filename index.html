@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>When the cat's away</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-navy-dark: #141F52;
+      --color-navy-header: #475ED1;
+      --color-primary-blue: #2E45B8;
+      --color-teal: #1DC9A4;
+      --color-pin-unviewed: #D02B2B;
+      --color-pin-viewed: #2E45B8;
+      --color-bg-light: #EBEDFA;
+      --color-text-dark: #111111;
+      --font-main: 'Noto Sans', sans-serif;
+      --ink: #0E0C0C;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* No vh units and no vertical centring: the page is exactly as tall as
+       the interactive, and reports that height to the Moodle parent (see the
+       height-reporting script at the end). 8px margin on top + 20px of room
+       below for the drop shadow. */
+    html { overflow-x: hidden; overflow-y: auto; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: #ffffff;
+      display: block;
+      margin: 8px;
+      padding: 0;
+    }
+
+    /* CONTAINER */
+    .interactive-container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      background: #ffffff;
+      border-radius: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+      container-type: inline-size;
+    }
+
+    /* ========================================================= */
+    /* 1. COVER SLIDE STYLES                                     */
+    /* ========================================================= */
+    .view-cover {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4rem 6rem;
+      z-index: 500;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .view-cover.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .cover-content {
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      z-index: 2;
+    }
+
+    .cover-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1.25;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: slideUpFade 1.6s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+      animation-delay: 0.2s;
+    }
+
+    .btn-start {
+      align-self: flex-start;
+      background-color: #2E45B8;
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 2.5rem;
+      font-size: 1rem;
+      font-family: var(--font-main);
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(46, 69, 184, 0.25);
+      transition: background-color 0.2s ease, transform 0.15s ease;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out forwards;
+      animation-delay: 1s;
+    }
+
+    .btn-start:hover {
+      background-color: #141F52;
+      transform: translateY(-1px);
+    }
+
+    .btn-start:focus-visible {
+      outline: 3px solid var(--color-teal);
+      outline-offset: 2px;
+    }
+
+    .cover-illustration {
+      width: 45%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cover-illustration img {
+      width: 100%;
+      max-width: 360px;
+      height: auto;
+      display: block;
+    }
+
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ========================================================= */
+    /* 2. HEADER & STAGE STYLES                                  */
+    /* ========================================================= */
+    .app-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.75rem;
+      background: #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      height: 10%;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+    }
+
+    .sub-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #333333;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      --ring: #475ED1;
+      --ring-fill: transparent;
+      --glyph: #475ED1;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      flex: none;
+      display: block;
+      border-radius: 50%;
+      transition: none;
+    }
+
+    .icon-btn svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .icon-btn .ring {
+      fill: var(--ring-fill);
+      stroke: var(--ring);
+      stroke-width: 1;
+    }
+
+    .icon-btn .glyph {
+      fill: var(--glyph);
+    }
+
+    .icon-btn .xglyph {
+      fill: none;
+      stroke: var(--glyph);
+      stroke-width: 2;
+      stroke-linecap: butt;
+    }
+
+    .icon-btn:hover,
+    .icon-btn:focus-visible {
+      --ring: #1f2e7a;
+      --ring-fill: #ebedfa;
+      --glyph: #1f2e7a;
+      outline: none;
+    }
+
+    .icon-btn:active {
+      --ring: #1dc9a4;
+      --ring-fill: transparent;
+      --glyph: #1f2e7a;
+    }
+
+    .stage-view {
+      position: relative;
+      width: 100%;
+      height: 90%;
+      background-color: #ffffff;
+      overflow: hidden;
+      perspective: 800px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      container-type: size;
+    }
+
+    /* Frame = the map's exact shape, fitted inside the stage ("contain").
+       Map, highlights and pins all live inside it, so they share one
+       coordinate system and scale together. 2.2327 = 1112.8 / 498.4 */
+    .map-canvas-frame {
+      position: relative;
+      flex: none;
+      width: min(100cqw, 100cqh * 2.2327);
+      aspect-ratio: 1112.8 / 498.4;
+    }
+
+    .world-map-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .map-highlights {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .map-hl {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .map-hl.active {
+      opacity: 1;
+    }
+
+    #hl-southchina.active {
+      opacity: 0.2;
+    }
+
+    /* Leader Line */
+    .map-leader {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .map-leader.active {
+      opacity: 1;
+    }
+
+    .pin-btn {
+      position: absolute;
+      transform: translate(-50%, -100%) scale(0);
+      transform-origin: 50% 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 20;
+      opacity: 0;
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      backface-visibility: hidden;
+    }
+
+    .pin-btn.animated {
+      animation: pinPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .pin-btn.swiveling .pin-img {
+      animation: pinSwivel 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .pin-btn.viewed {
+      pointer-events: none !important;
+      cursor: default !important;
+    }
+
+    .pin-btn:not(.viewed):hover, 
+    .pin-btn:not(.viewed):focus-visible {
+      transform: translate(-50%, -100%) scale(1.25) !important;
+    }
+
+    .pin-img {
+      width: 21px;
+      height: auto;
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    @keyframes pinPop {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1);
+      }
+    }
+
+    @keyframes pinSwivel {
+      0% { transform: rotateY(0deg) scale(1); }
+      50% { transform: rotateY(90deg) scale(1.2); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+
+    /* PIN POSITIONS: percentages of the MAP */
+    .pin-ukraine    { top: 22.4%; left: 55.3%; }
+    .pin-turkey     { top: 30.1%; left: 56.5%; }
+    .pin-georgia    { top: 27.5%; left: 59.0%; }
+    .pin-syria      { top: 32.7%; left: 58.1%; }
+    .pin-yemen      { top: 47.0%; left: 61.1%; }
+    .pin-indiachina { top: 31.7%; left: 69.9%; }
+    .pin-southchina { top: 47.0%; left: 80.9%; }
+
+    /* ========================================================= */
+    /* 3. MODALS & SPOTLIGHT OVERLAYS                            */
+    /* ========================================================= */
+    .dark-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 31, 82, 0.94);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity;
+      transform: translateZ(0);
+    }
+
+    .dark-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .spotlight-view-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 2.25rem;
+      transform: translateZ(0);
+    }
+
+    .spotlight-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .spotlight-beam {
+      position: relative;
+      width: 960px;
+      max-width: 92%;
+      aspect-ratio: 1056.8 / 170.6;
+      margin-bottom: -1px;
+      z-index: 310;
+      pointer-events: none;
+    }
+
+    .spotlight-triangle-clip {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .spotlight-triangle-bg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .spotlight-wedge {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .spotlight-circle-frame {
+      position: absolute;
+      top: var(--cy, 33%);
+      left: var(--cx, 55.5%);
+      transform: translate(-50%, -50%);
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      overflow: hidden;
+      z-index: 330;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      background-color: #ffffff;
+    }
+
+    .spotlight-circle-frame img.spotlight-map-bg {
+      position: absolute;
+      width: 106.65%;
+      height: 102.9%;
+      left: -3.25%;
+      top: -0.14%;
+      max-width: none;
+      display: block;
+    }
+
+    .spotlight-pin-icon {
+      position: absolute;
+      top: 53.1%;
+      left: 50.8%;
+      transform: translate(-50%, -100%);
+      width: 20px;
+      height: auto;
+      z-index: 335;
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
+    }
+
+    .dialog-card {
+      background: #ffffff;
+      border-radius: 0;
+      width: 960px;
+      max-width: 92%;
+      padding: 1.75rem 2.75rem 2.25rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 315;
+    }
+
+    .dialog-card h2 {
+      font-size: 1.45rem;
+      color: var(--color-text-dark);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 0.75rem;
+    }
+
+    .dialog-card p {
+      font-size: 0.88rem;
+      color: #333;
+      line-height: 1.65;
+    }
+
+    .close-card-btn {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: #ffffff;
+      border: 1.5px solid var(--color-primary-blue);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--color-primary-blue);
+      transition: all 0.2s ease;
+    }
+
+    .close-card-btn:hover {
+      background: var(--color-bg-light);
+    }
+
+    .spotlight-view-container.layout-left .spotlight-stack {
+      display: block;
+      padding-left: 0;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .spotlight-view-container.layout-left .dialog-card {
+      position: absolute;
+      left: 6.7%;
+      bottom: 21%;
+      width: 43%;
+      max-width: none;
+      transition: none !important;
+    }
+
+    .spotlight-view-container.layout-left.turkey-layout .dialog-card {
+      position: absolute;
+      left: 6.7%;
+      bottom: 21% !important;
+      top: auto !important;
+      width: 43%;
+      max-width: none;
+    }
+
+    .spotlight-view-container.layout-left.card-wide .dialog-card {
+      width: 45%;
+      bottom: 16%;
+    }
+
+    .spotlight-view-container.layout-left.card-wider .dialog-card {
+      width: 52.5%;
+      bottom: 12%;
+    }
+
+    .spotlight-view-container.layout-left.wedge-outer .dialog-card {
+      bottom: 12%;
+    }
+
+    .spotlight-view-container.layout-left .spotlight-beam {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      aspect-ratio: auto;
+      margin: 0;
+      transition: none !important;
+    }
+
+    .spotlight-view-container.layout-left .spotlight-triangle-clip { display: none; }
+    .spotlight-view-container.layout-left .spotlight-wedge { display: block; }
+
+    .spotlight-view-container.layout-left .spotlight-circle-frame {
+      left: var(--cx, 56%);
+      top: var(--cy, 36%);
+      transition: none !important;
+    }
+
+    .spotlight-view-container.layout-left.zoom-map .spotlight-circle-frame img.spotlight-map-bg {
+      transform: scale(1.17);
+      transform-origin: 50.7% 51.7%;
+    }
+
+    /* CENTER MODAL */
+    .center-modal {
+      background: #ffffff;
+      border-radius: 0;
+      padding: 3.25rem 3.5rem 2.25rem;
+      text-align: center;
+      width: 90%;
+      max-width: 820px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      position: relative;
+      margin-top: 2rem;
+    }
+
+    .modal-badge-graphic {
+      position: absolute;
+      top: -42px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      z-index: 10;
+      background-color: #ffffff;
+      display: block;
+    }
+
+    .center-modal h2 {
+      font-size: 0.95rem;
+      color: #222222;
+      margin-bottom: 1.75rem;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .action-btn {
+      background: #2E45B8;
+      color: #ffffff;
+      border: none;
+      padding: 0.65rem 2.5rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .action-btn:hover {
+      background: #141F52;
+      transform: translateY(-1px);
+    }
+
+    .completion-card {
+      max-width: 580px;
+      padding: 2.75rem 3rem 2.25rem;
+      position: relative;
+    }
+
+    .completion-illustration {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      margin: 0 auto 1.5rem;
+      display: block;
+    }
+
+    .completion-buttons {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .btn-outline {
+      background: #ffffff !important;
+      color: var(--color-primary-blue) !important;
+      border: 1.5px solid var(--color-primary-blue) !important;
+    }
+
+    .btn-outline:hover {
+      background: var(--color-bg-light) !important;
+      color: var(--color-navy-dark) !important;
+    }
+
+    .biblio-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 31, 82, 0.95);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .biblio-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .biblio-card {
+      background: #ffffff;
+      border-radius: 0;
+      width: 78%;
+      max-height: 80%;
+      padding: 1.75rem 2.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .bib-head {
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .bib-head h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 16px;
+      padding: 0;
+    }
+
+    .bib-body {
+      padding: 18px 24px;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.72;
+      color: var(--ink);
+      font-weight: 400;
+      flex: 1;
+    }
+
+    .bib-entry {
+      margin: 0 0 14px;
+      padding: 0 0 0 24px;
+      text-indent: -24px;
+      border: 0;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    /* ========================================================= */
+    /* SCALING LAYER: every size below follows the container width */
+    /* ========================================================= */
+    @property --u {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 1px;
+    }
+    .interactive-container > * { --u: 0.089286cqw; }
+
+    .app-header { padding: calc(12.8 * var(--u)) calc(28 * var(--u)); }
+    .sub-title { font-size: calc(17.5 * var(--u)); }
+    .header-buttons { gap: calc(8 * var(--u)); }
+    .icon-btn { width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
+
+    .view-cover { padding: calc(64 * var(--u)) calc(96 * var(--u)); }
+    .cover-content { max-width: calc(460 * var(--u)); gap: calc(32 * var(--u)); }
+    .cover-title { font-size: calc(48 * var(--u)); }
+    .btn-start { padding: calc(12 * var(--u)) calc(40 * var(--u)); font-size: calc(16 * var(--u)); }
+    .cover-illustration img { max-width: calc(360 * var(--u)); }
+
+    .pin-img { width: calc(21 * var(--u)); }
+
+    .spotlight-view-container { padding-bottom: calc(36 * var(--u)); }
+    .spotlight-beam { width: calc(960 * var(--u)); }
+    .spotlight-circle-frame { width: calc(132 * var(--u)); height: calc(132 * var(--u)); border-width: calc(2 * var(--u)); }
+    .spotlight-pin-icon { width: calc(20 * var(--u)); }
+
+    .dialog-card { width: calc(960 * var(--u)); padding: calc(28 * var(--u)) calc(44 * var(--u)) calc(36 * var(--u)); }
+    .dialog-card h2 { font-size: calc(23.2 * var(--u) * (1 + (var(--fs, 1) - 1) * 0.5)); margin-bottom: calc(16 * var(--u)); padding-bottom: calc(12 * var(--u)); }
+    .dialog-card p { font-size: calc(14.08 * var(--u) * var(--fs, 1)); line-height: 1.65; color: #1a1a1a; }
+    .dialog-card p.is-scrollable { overflow-y: auto; padding-right: calc(10 * var(--u)); }
+    .dialog-card p.is-scrollable:focus-visible { outline: 3px solid var(--color-primary-blue); outline-offset: 2px; }
+    .close-card-btn { top: calc(20 * var(--u)); right: calc(20 * var(--u)); width: calc(36 * var(--u)); height: calc(36 * var(--u)); font-size: calc(20 * var(--u)); }
+
+    .spotlight-view-container.layout-left .dialog-card { width: 43%; }
+    .spotlight-view-container.layout-left.turkey-layout .dialog-card { width: 43%; }
+    .spotlight-view-container.layout-left.card-wide .dialog-card { width: 45%; }
+    .spotlight-view-container.layout-left.card-wider .dialog-card { width: 52.5%; }
+
+    .center-modal { padding: calc(52 * var(--u)) calc(56 * var(--u)) calc(36 * var(--u)); max-width: calc(820 * var(--u)); margin-top: calc(32 * var(--u)); }
+    .center-modal h2 { font-size: calc(18.5 * var(--u)); margin-bottom: calc(28 * var(--u)); }
+    .modal-badge-graphic { top: calc(-42 * var(--u)); width: calc(84 * var(--u)); height: calc(84 * var(--u)); }
+    .action-btn { padding: calc(11 * var(--u)) calc(40 * var(--u)); font-size: calc(16.5 * var(--u)); }
+    .completion-card { max-width: calc(580 * var(--u)); padding: calc(44 * var(--u)) calc(48 * var(--u)) calc(36 * var(--u)); }
+    .completion-illustration { max-width: calc(280 * var(--u)); margin-bottom: calc(24 * var(--u)); }
+    .completion-buttons { gap: calc(20 * var(--u)); margin-top: calc(24 * var(--u)); }
+
+    .biblio-overlay { padding: calc(24 * var(--u)); }
+    .biblio-card { padding: calc(28 * var(--u)) calc(40 * var(--u)); }
+    .bib-head h2 { font-size: calc(21 * var(--u)); margin-bottom: calc(16 * var(--u)); }
+    .bib-body { padding: calc(18 * var(--u)) calc(24 * var(--u)); font-size: calc(17 * var(--u)); }
+    .bib-entry { margin-bottom: calc(14 * var(--u)); padding-left: calc(24 * var(--u)); text-indent: calc(-24 * var(--u)); }
+
+    @media (max-width: 768px) {
+      .interactive-container { aspect-ratio: auto; min-height: 540px; }
+      .view-cover { flex-direction: column-reverse; padding: 2.5rem 1.5rem 1.5rem; gap: 1.5rem; justify-content: center; }
+      .cover-content { align-items: center; text-align: center; }
+      .cover-title { font-size: 32px; }
+      .btn-start { align-self: center; width: 100%; max-width: 200px; }
+      .cover-illustration { width: 60%; }
+      .dialog-card { width: 95%; padding: 1.25rem; }
+      .spotlight-circle-frame { width: 90px; height: 90px; }
+      .spotlight-view-container.layout-left .dialog-card { width: 90%; left: 5%; }
+      .spotlight-view-container.layout-left.turkey-layout .dialog-card { width: 90%; left: 5%; bottom: 10% !important; }
+      .spotlight-view-container.layout-left.card-wide .dialog-card,
+      .spotlight-view-container.layout-left.card-wider .dialog-card { width: 90%; }
+      .biblio-card { width: 95%; max-height: 85%; padding: 1.25rem; }
+      .bib-body { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="interactive-container" id="interactive-app">
+
+    <!-- COVER SLIDE -->
+    <section class="view-cover" id="cover-view">
+      <div class="cover-content">
+        <h1 class="cover-title">When the cat's away</h1>
+        <button class="btn-start" id="btn-start-cover" aria-label="Start Interactive">Start</button>
+      </div>
+      <div class="cover-illustration">
+        <img 
+          src="Resources/PastedVector-39.svg" 
+          alt="Global Mouse Illustration" 
+          id="cover-mouse-img"
+          onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 360 300\'><ellipse cx=\'240\' cy=\'240\' rx=\'95\' ry=\'28\' fill=\'%23E8E6DF\'/><path d=\'M240 230c45 0 85-30 65-75s-20-40-5-5-10 65-60 80z\' fill=\'%23141F52\'/><circle cx=\'215\' cy=\'130\' r=\'24\' fill=\'%23141F52\'/><circle cx=\'280\' cy=\'130\' r=\'24\' fill=\'%23141F52\'/><circle cx=\'248\' cy=\'155\' r=\'42\' fill=\'%232E45B8\'/><polygon points=\'205,200 235,215 205,230\' fill=\'%23F5C344\'/></svg>';"
+        >
+      </div>
+    </section>
+
+    <!-- HEADER & MAIN MAP STAGE -->
+    <header class="app-header">
+      <div class="brand-section">
+        <span class="sub-title">When the cat's away</span>
+      </div>
+      <nav class="header-buttons" aria-label="Interactive Navigation">
+        <button class="icon-btn" id="btn-reset" aria-label="Reset Infographic">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <path class="glyph" d="M18 10.5l-7 6.2v8.8h4.5v-5.5h5v5.5H25v-8.8l-7-6.2z"/>
+          </svg>
+        </button>
+        <!-- UPDATED BIBLIOGRAPHY BUTTON WITH SOLID OPEN-BOOK GLYPH -->
+        <button class="icon-btn" id="btn-biblio" aria-label="Open Bibliography">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <path class="glyph" d="M11 12.8c2.2-1 4.5-.8 6.2.2v10.5c-1.8-.8-4-1-6.2 0V12.8zm14 0c-2.2-1-4.5-.8-6.2.2v10.5c1.8-.8 4-1 6.2 0V12.8z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-exit" aria-label="Exit Interactive">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
+            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
+          </svg>
+        </button>
+      </nav>
+    </header>
+
+    <main class="stage-view">
+      <!-- MAP CANVAS FRAME (exact map shape) -->
+      <div class="map-canvas-frame" id="map-canvas-frame">
+        <!-- BASE MAP -->
+        <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="World Map" class="world-map-svg">
+
+        <!-- HIGHLIGHT MAP SVGS (map coordinates 1112.8 x 498.4) -->
+        <svg class="map-highlights" viewBox="0 0 1112.8 498.4" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <filter id="tint-southchina" color-interpolation-filters="sRGB">
+              <feFlood flood-color="#475ED1" result="c"/>
+              <feComposite in="c" in2="SourceAlpha" operator="in"/>
+            </filter>
+          </defs>
+          <image id="hl-ukraine"    class="map-hl" href="Resources/PastedVector-18.svg" x="589.3" y="96.7"  width="52.1" height="29.2"/>
+          <image id="hl-turkey"     class="map-hl" href="Resources/PastedVector-19.svg" x="603.3" y="134.3" width="60.2" height="23.6"/>
+          <image id="hl-syria"      class="map-hl" href="Resources/PastedVector-20.svg" x="634.5" y="153"   width="20"   height="19"/>
+          <image id="hl-georgia"    class="map-hl" href="Resources/PastedVector-21.svg" x="651"   y="133.5" width="22.1" height="9.5"/>
+          <image id="hl-yemen"      class="map-hl" href="Resources/PastedVector-22.svg" x="664.5" y="219.8" width="34.1" height="24.2"/>
+          <image id="hl-indiachina" class="map-hl" href="Resources/PastedVector-23.svg" x="769"   y="155.6" width="15.5" height="20.4"/>
+          <image id="hl-southchina" class="map-hl" href="Resources/PastedVector-28.svg" x="878.0" y="197.5" width="54.5" height="84.5" filter="url(#tint-southchina)"/>
+          <polyline id="leader-indiachina" class="map-leader" points="778,156 777.7,160.9 775,163.6" fill="none" stroke="#E3120B" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <!-- MAP PINS -->
+        <button class="pin-btn pin-ukraine" data-id="ukraine" aria-label="Ukraine Conflict">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-turkey" data-id="turkey" aria-label="Turkey Intervention">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-syria" data-id="syria" aria-label="Syria Red Line">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-georgia" data-id="georgia" aria-label="Georgia War">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-yemen" data-id="yemen" aria-label="Yemen Crisis">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-indiachina" data-id="indiachina" aria-label="India-China Conflict">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+        <button class="pin-btn pin-southchina" data-id="southchina" aria-label="South China Sea">
+          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+        </button>
+      </div>
+    </main>
+
+    <!-- INTRO OVERLAY MODAL -->
+    <div class="dark-overlay" id="intro-modal">
+      <div class="center-modal">
+        <img 
+          src="Resources/PastedVector-34.svg" 
+          alt="Instruction House Graphic" 
+          class="modal-badge-graphic"
+          onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 84 84\'><circle cx=\'42\' cy=\'42\' r=\'40\' fill=\'%23ffffff\' stroke=\'%23f0f2f8\' stroke-width=\'2\'/><path d=\'M42 26 L29 37 L33 37 L33 53 L51 53 L51 37 L55 37 Z\' fill=\'%232E45B8\'/></svg>';"
+        >
+        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non-intervention.</h2>
+        <button class="action-btn" id="intro-continue-btn">Continue</button>
+      </div>
+    </div>
+
+    <!-- SPOTLIGHT OVERLAY MODAL -->
+    <div class="dark-overlay" id="content-modal">
+      <div class="spotlight-view-container" id="spotlight-container">
+        
+        <!-- CIRCULAR SPOTLIGHT FRAME -->
+        <div class="spotlight-circle-frame" id="spotlight-circle">
+          <img src="" id="spotlight-map-bg" alt="Regional Map Spotlight" class="spotlight-map-bg">
+          <img src="Resources/PastedVector-25.svg" alt="Location Pin" class="spotlight-pin-icon">
+        </div>
+
+        <div class="spotlight-stack" id="spotlight-stack">
+          <!-- TRIANGLE BEAM -->
+          <div class="spotlight-beam" id="spotlight-beam">
+            <div class="spotlight-triangle-clip">
+              <img src="Resources/PastedVector-30.svg" alt="" class="spotlight-triangle-bg">
+            </div>
+
+            <svg class="spotlight-wedge" id="spotlight-wedge" aria-hidden="true">
+              <polygon id="spotlight-wedge-poly" fill="#141F52"></polygon>
+            </svg>
+          </div>
+
+          <!-- DIALOG CARD -->
+          <div class="dialog-card">
+            <button class="close-card-btn" id="close-dialog-btn" aria-label="Close dialog">&times;</button>
+            <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
+            <p id="card-body">In 2013, Ukraine’s pro-Russian government suspended the signing of an association agreement with the European Union, sparking mass protests by the pro-European Maidan movement, the Ukrainian revolution and the overthrow of Ukraine’s pro-Russian government. In 2014, Russia took advantage of the internal conflict to impose itself in this part of the former Soviet Union, calculating that the US would not be able to deter it. First, it annexed Crimea, a peninsula in the Black Sea. Protestors in Crimea, backed by disguised Russian soldiers, rejected the new Ukrainian government, seized the local parliament building and organised a referendum, in which, Russia claimed, Crimeans voted overwhelmingly to join Russia. Soon after pro-Russian rebels seized territory in eastern Ukraine with the help of the Russian army, which led to brutal fighting and a humanitarian crisis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETION OVERLAY MODAL -->
+    <div class="dark-overlay" id="completion-modal">
+      <div class="center-modal completion-card">
+        <button class="close-card-btn" id="close-completion-btn" aria-label="Close dialog">&times;</button>
+        <img src="Resources/PastedVector-6.svg" alt="Collar with US Flag buckle and cheese" class="completion-illustration">
+        <h2>You have completed this interactive infographic.<br>What would you like to do next?</h2>
+        <div class="completion-buttons">
+          <button class="action-btn" id="completion-exit-btn">Exit</button>
+          <button class="action-btn btn-outline" id="completion-biblio-btn">View bibliography</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIBLIOGRAPHY OVERLAY -->
+    <div class="biblio-overlay" id="biblio-overlay">
+      <div class="biblio-card">
+        <button class="close-card-btn" id="close-biblio-btn" aria-label="Close Bibliography">&times;</button>
+        <div class="bib-head">
+          <h2>Bibliography</h2>
+        </div>
+        <div class="bib-body">
+          <p class="bib-entry">Council on Foreign Relations. n.d. <i>Conflict in Ukraine.</i> Available: https://www.cfr.org/global-conflict-tracker/conflict/conflict-ukraine [2021, February 23].</p>
+          <p class="bib-entry">Council on Foreign Relations. n.d. <i>Conflict in Yemen.</i> Available: https://www.cfr.org/global-conflict-tracker/conflict/war-yemen [2021, February 23].</p>
+          <p class="bib-entry">Falk, T.O. 2020. What the US troop withdrawal means for Iraq. <i>Aljazeera.</i> 22 November. Available: https://www.aljazeera.com/news/2020/11/22/what-the-us-troop-withdrawal-means-for-iraq [2021, February 23].</p>
+          <p class="bib-entry">Fisher, M. 2014. Everything you need to know about the Ukraine crisis. 2014. <i>Vox.</i> 3 September. Available: https://www.vox.com/2014/9/3/18088560/ukraine-everything-you-need-to-know [2021, February 23].</p>
+          <p class="bib-entry">Gilani, I. 2020. Timeline - Clashes, Standoffs between Chinese and Indian armies. <i>Anadolu Agency.</i> 16 June. Available: https://www.aa.com.tr/en/asia-pacific/timeline-clashes-standoffs-between-chinese-and-indian-armies/1879115# [2021, February 23].</p>
+          <p class="bib-entry">History. 2020. <i>5-day long Russo-Georgian War begins.</i> Available: https://www.history.com/this-day-in-history/5-day-long-russo-georgian-war-begins [2021, February 23].</p>
+          <p class="bib-entry">Martinez, L. 2019. Why the US Navy sails past disputed artificial islands claimed by China. <i>ABC News.</i> 6 May. Available: https://abcnews.go.com/Politics/us-navy-sails-past-disputed-artificial-islands-claimed/story?id=60993256#:~:text=In%202014%20China%20began%20massive,deployment%20of%20Chinese%20fighter%20jets [2021, February 23].</p>
+          <p class="bib-entry">Rhodes, B. 2018. Inside the White House during the Syrian 'red line' crisis. <i>The Atlantic.</i> 3 June. Available: https://www.theatlantic.com/international/archive/2018/06/inside-the-white-house-during-the-syrian-red-line-crisis/561887/ [2021, February 23].</p>
+          <p class="bib-entry">Turkey launches ground offensive in northern Syria. 2019. <i>BBC.</i> 9 October. Available: https://www.bbc.com/news/world-middle-east-49983357 [2021, February 23].</p>
+          <p class="bib-entry">United Nations International Children's Emergency Fund. n.d <i>Yemen Crisis.</i> Available: https://www.unicef.org/emergencies/yemen-crisis [2021, February 23].</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const regionData = {
+      ukraine: {
+        title: "The invasion of Crimea and eastern Ukraine",
+        body: "In 2013, Ukraine’s pro-Russian government suspended the signing of an association agreement with the European Union, sparking mass protests by the pro-European Maidan movement, the Ukrainian revolution and the overthrow of Ukraine’s pro-Russian government. In 2014, Russia took advantage of the internal conflict to impose itself in this part of the former Soviet Union, calculating that the US would not be able to deter it. First, it annexed Crimea, a peninsula in the Black Sea. Protestors in Crimea, backed by disguised Russian soldiers, rejected the new Ukrainian government, seized the local parliament building and organised a referendum, in which, Russia claimed, Crimeans voted overwhelmingly to join Russia. Soon after pro-Russian rebels seized territory in eastern Ukraine with the help of the Russian army, which led to brutal fighting and a humanitarian crisis.",
+        mapImg: "Resources/PastedVector-29.svg",
+        highlightId: "hl-ukraine",
+        layoutClass: ""
+      },
+      turkey: {
+        title: "Turkey’s intervention in Syria",
+        body: "In October 2019, Turkey launched an attack in northern Syria, shortly after Donald Trump announced the withdrawal of US troops. This withdrawal left the Syrian Democratic Forces and the Kurds, its main allies in its battle against the Islamic State, without US military support. Turkey claimed the attack was an attempt to prevent a “terror corridor” along its southern border.",
+        mapImg: "Resources/PastedVector-37.svg",
+        highlightId: "hl-turkey",
+        layoutClass: "layout-left zoom-map turkey-layout"
+      },
+      syria: {
+        title: "Obama’s “red line” in Syria",
+        body: "In August 2012, Barack Obama gave a warning to Syria's president that the use of chemical weapons by the Assad government in the country's civil war would cross a “red line”. One year later, opposition-held areas near Damascus were struck by missiles containing sarin gas. Hundreds died. Obama asked for a Congressional resolution to authorise military action in Syria but, against a background of popular opposition to such action, the resolution was never voted on. Instead, Russia negotiated a deal under which Syria agreed to destroy its chemical-weapons stockpile and to join the Chemical Weapons Convention.",
+        mapImg: "Resources/PastedVector-35.svg",
+        highlightId: "hl-syria",
+        layoutClass: "layout-left zoom-map"
+      },
+      georgia: {
+        title: "The Russo-Georgian war",
+        body: "The relationship between Russia and Georgia has been tense ever since the fall of the Soviet Union and Russia’s annexation of Abkhazia and South Ossetia, two autonomous regions which Georgia and most of the world recognise as part of Georgia but which Russia and a few allies call independent states. In August 2008, after George W. Bush announced his support for Georgia joining NATO, tension boiled over and resulted in a bloody 5-day war between Russia and Georgia. By 2021, Georgia was still not a member of NATO and Russia still controlled Abkhazia and South Ossetia.",
+        mapImg: "Resources/PastedVector-31.svg",
+        highlightId: "hl-georgia",
+        layoutClass: "layout-left zoom-map anchor-card"
+      },
+      yemen: {
+        title: "War and famine in Yemen",
+        body: "In 2014, a long-running conflict between the predominantly Sunni government of Yemen and rebels belonging to the mainly Shia Houthi movement—with links to Iran—erupted into a civil war. After the Houthis captured the capital, the conflict turned into another front in the contest for regional dominance between Iran and Saudi Arabia and another example of the US' inability to restrain military adventurism in the Middle East. The ousted government appealed to the Saudis, who intervened militarily on its side, leading a coalition of eight other countries. Iran, according to a UN report, backed the Houthis with money, training and arms. The US was also caught up in the fighting after one of its warships was attacked by missiles fired, the US said, by the Houthis. Despite ceasefires in 2016 and 2020, the war ground slowly on, leading to a stalemate and what, in 2020, UNICEF called “the largest humanitarian crisis in the world”.",
+        mapImg: "Resources/PastedVector-36.svg",
+        highlightId: "hl-yemen",
+        layoutClass: "layout-left zoom-map card-wide wedge-outer"
+      },
+      indiachina: {
+        title: "India-China conflict",
+        body: "Tensions have been high between these two countries over the contours of their borders for almost half a century. With China’s growing brazenness, things escalated in 2020 when the Indian and Chinese armies clashed at the Galwan Valley, resulting in the brutal killing of 20 Indian soldiers. China claimed that the clash was a reaction to Indian forces carrying out illegal activities.",
+        mapImg: "Resources/PastedVector-33.svg",
+        highlightId: "hl-indiachina",
+        layoutClass: "layout-left zoom-map card-wide indiachina-layout"
+      },
+      southchina: {
+        title: "Islands in the South China Sea",
+        body: "In 2014, China started constructing artificial islands in the South China Sea. These islands have been transformed into military facilities, projecting China’s military power in the disputed maritime region and pushing back against the US naval presence in the western Pacific. The US and its allies have seen this as destabilising and intimidating.",
+        mapImg: "Resources/PastedVector-32.svg",
+        highlightId: "hl-southchina",
+        layoutClass: "layout-left zoom-map card-wider southchina-layout"
+      }
+    };
+
+    // Preload regional SVG images into browser cache
+    Object.values(regionData).forEach(r => {
+      if (r.mapImg) {
+        const img = new Image();
+        img.src = r.mapImg;
+      }
+    });
+
+    const coverView = document.getElementById('cover-view');
+    const introModal = document.getElementById('intro-modal');
+    const contentModal = document.getElementById('content-modal');
+    const completionModal = document.getElementById('completion-modal');
+    const biblioOverlay = document.getElementById('biblio-overlay');
+    const cardTitle = document.getElementById('card-title');
+    const cardBody = document.getElementById('card-body');
+    const spotlightContainer = document.getElementById('spotlight-container');
+    const spotlightMapBg = document.getElementById('spotlight-map-bg');
+
+    const viewedMap = new Set();
+    let activePin = null;
+
+    // Tangent points from an external point (px, py) to a circle (cx, cy, r)
+    function tangentPoints(px, py, cx, cy, r) {
+      const dx = cx - px, dy = cy - py;
+      const d = Math.hypot(dx, dy);
+      if (d <= r) return [[cx, cy], [cx, cy]];
+      const a = Math.atan2(dy, dx);
+      const o = Math.asin(r / d);
+      const l = Math.sqrt(d * d - r * r);
+      return [a - o, a + o].map(t => [px + l * Math.cos(t), py + l * Math.sin(t)]);
+    }
+
+    // Measure exact tip coordinates in relation to app container
+    function getPinTipCoordinates(pin, app) {
+      const pinImg = pin.querySelector('.pin-img');
+      const appRect = app.getBoundingClientRect();
+      const pinImgRect = pinImg.getBoundingClientRect();
+      return {
+        x: (pinImgRect.left + pinImgRect.width / 2) - appRect.left,
+        y: pinImgRect.bottom - appRect.top
+      };
+    }
+
+    // Left-aligned regions layout: card bottom-left, diagonal wedge connecting to the circle
+    function alignLeftLayout(pin) {
+      const app = document.getElementById('interactive-app');
+      const stack = document.getElementById('spotlight-stack');
+      const circle = document.getElementById('spotlight-circle');
+      const card = document.querySelector('.dialog-card');
+      const wedge = document.getElementById('spotlight-wedge');
+      const poly = document.getElementById('spotlight-wedge-poly');
+
+      stack.style.transform = '';
+
+      const tip = getPinTipCoordinates(pin, app);
+      const size = circle.clientWidth;
+      const cx = tip.x - (0.508 - 0.5) * size;
+      const cy = tip.y - (0.531 - 0.5) * size;
+      circle.style.setProperty('--cx', cx + 'px');
+      circle.style.setProperty('--cy', cy + 'px');
+
+      const em = edgeMargin();
+      if (spotlightContainer.classList.contains('anchor-card')) {
+        let top = Math.min(cy - 0.17 * circle.offsetWidth, app.offsetHeight - em - card.offsetHeight);
+        card.style.top = Math.max(top, em) + 'px';
+        card.style.bottom = 'auto';
+      } else if (spotlightContainer.classList.contains('turkey-layout')) {
+        const tTop = Math.min(cy - 0.025 * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
+        card.style.setProperty('top', Math.max(tTop, em) + 'px', 'important');
+        card.style.setProperty('bottom', 'auto', 'important');
+      } else if (spotlightContainer.classList.contains('indiachina-layout') || spotlightContainer.classList.contains('southchina-layout')) {
+        const lift = spotlightContainer.classList.contains('southchina-layout') ? 0.007 : 0.004;
+        const iTop = Math.min(cy - lift * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
+        card.style.top = Math.max(iTop, em) + 'px';
+        card.style.bottom = 'auto';
+      } else {
+        card.style.top = Math.max(em, (app.offsetHeight - card.offsetHeight) / 2) + 'px';
+        card.style.bottom = 'auto';
+      }
+
+      const r = circle.offsetWidth / 2 - 1;
+      const p2 = [card.offsetLeft + card.offsetWidth, card.offsetTop + card.offsetHeight];
+      const forceTopLeft = ['turkey-layout', 'indiachina-layout', 'southchina-layout'].some(c => spotlightContainer.classList.contains(c));
+      const cardAboveCircle = !forceTopLeft && card.offsetTop < cy - r;
+      let p1, t1;
+      
+      if (cardAboveCircle) {
+        p1 = [card.offsetLeft + card.offsetWidth, card.offsetTop];
+        if (spotlightContainer.classList.contains('wedge-outer')) {
+          t1 = tangentPoints(p1[0], p1[1], cx, cy, r).sort((a, b) => b[0] - a[0])[0];
+        } else {
+          const vx = cx - p1[0], vy = cy - p1[1], vd = Math.hypot(vx, vy);
+          t1 = [cx - vx / vd * r, cy - vy / vd * r];
+        }
+      } else {
+        p1 = [card.offsetLeft, card.offsetTop];
+        t1 = tangentPoints(p1[0], p1[1], cx, cy, r).sort((a, b) => a[1] - b[1])[0];
+      }
+      const t2 = tangentPoints(p2[0], p2[1], cx, cy, r).sort((a, b) => b[0] - a[0])[0];
+
+      wedge.setAttribute('viewBox', '0 0 ' + app.offsetWidth + ' ' + app.offsetHeight);
+      poly.setAttribute('points', [p1, t1, t2, p2].map(p => p.join(',')).join(' '));
+    }
+
+    function alignSpotlightToPin(pin) {
+      if (!pin) return;
+      if (spotlightContainer.classList.contains('layout-left')) {
+        alignLeftLayout(pin);
+        return;
+      }
+
+      const app = document.getElementById('interactive-app');
+      const stack = document.getElementById('spotlight-stack');
+      const circle = document.getElementById('spotlight-circle');
+      const card = document.querySelector('.dialog-card');
+      const beam = document.getElementById('spotlight-beam');
+
+      card.style.top = '';
+      card.style.bottom = '';
+      stack.style.transform = '';
+
+      const tip = getPinTipCoordinates(pin, app);
+      const size = circle.offsetWidth || 132;
+      const cx = tip.x - (0.508 - 0.5) * size;
+      const beamRect = beam.getBoundingClientRect();
+      const appRect = app.getBoundingClientRect();
+      const beamTop = beamRect.height > 0 ? (beamRect.top - appRect.top) : (app.clientHeight * 0.33);
+
+      circle.style.setProperty('--cx', cx + 'px');
+      circle.style.setProperty('--cy', beamTop + 'px');
+    }
+
+    const FS_MAX = 1.26, FS_STEP = 0.02, FS_TARGET_MIN = 1.14;
+    let globalFs = null;
+
+    function edgeMargin() {
+      return document.getElementById('interactive-app').offsetWidth * 0.0214;
+    }
+    function clearScroll() {
+      cardBody.style.maxHeight = '';
+      cardBody.classList.remove('is-scrollable');
+      cardBody.removeAttribute('tabindex');
+    }
+    function setRegionContent(id) {
+      const d = regionData[id];
+      cardTitle.textContent = d.title;
+      cardBody.textContent = d.body;
+      spotlightContainer.className = 'spotlight-view-container ' + (d.layoutClass || '');
+    }
+    function leftFits() {
+      const a = document.getElementById('interactive-app').getBoundingClientRect();
+      const r = document.querySelector('.dialog-card').getBoundingClientRect();
+      const m = edgeMargin();
+      return r.top - a.top >= m - 0.5 && a.bottom - r.bottom >= m - 0.5;
+    }
+    function bestFitFor(pin) {
+      const card = document.querySelector('.dialog-card');
+      card.style.setProperty('--fs', '1');
+      clearScroll();
+      alignSpotlightToPin(pin);
+      if (!spotlightContainer.classList.contains('layout-left')) return FS_MAX;
+      for (let fs = FS_MAX; fs > 1.001; fs -= FS_STEP) {
+        card.style.setProperty('--fs', fs.toFixed(2));
+        alignSpotlightToPin(pin);
+        if (leftFits()) return fs;
+      }
+      return 1;
+    }
+    function computeGlobalFs() {
+      const keep = { cls: spotlightContainer.className, t: cardTitle.textContent, b: cardBody.textContent };
+      let min = FS_MAX;
+      Object.keys(regionData).forEach(id => {
+        const pin = document.querySelector('.pin-btn[data-id="' + id + '"]');
+        if (!pin) return;
+        setRegionContent(id);
+        min = Math.min(min, bestFitFor(pin));
+      });
+      spotlightContainer.className = keep.cls;
+      cardTitle.textContent = keep.t;
+      cardBody.textContent = keep.b;
+      globalFs = Math.max(FS_TARGET_MIN, min);
+    }
+
+    function fitAndAlign(pin) {
+      if (!pin) return;
+      if (globalFs === null) computeGlobalFs();
+
+      const app = document.getElementById('interactive-app');
+      const card = document.querySelector('.dialog-card');
+      const stack = document.getElementById('spotlight-stack');
+      const beam = document.getElementById('spotlight-beam');
+      const circle = document.getElementById('spotlight-circle');
+      const isLeft = spotlightContainer.classList.contains('layout-left');
+
+      clearScroll();
+      let baseBeamTop = 0;
+      if (!isLeft) {
+        card.style.setProperty('--fs', '1');
+        alignSpotlightToPin(pin);
+        baseBeamTop = beam.getBoundingClientRect().top;
+      }
+      card.style.setProperty('--fs', globalFs.toFixed(3));
+      alignSpotlightToPin(pin);
+
+      if (isLeft) {
+        const maxH = app.getBoundingClientRect().height - 2 * edgeMargin();
+        if (card.offsetHeight > maxH + 0.5) {
+          const fixed = card.offsetHeight - cardBody.offsetHeight;
+          cardBody.style.maxHeight = Math.max(80, maxH - fixed) + 'px';
+          cardBody.classList.add('is-scrollable');
+          cardBody.tabIndex = 0;
+          alignSpotlightToPin(pin);
+        }
+      } else {
+        const a = app.getBoundingClientRect();
+        const r = card.getBoundingClientRect();
+        const slack = Math.max(0, a.bottom - r.bottom - app.offsetWidth * 0.0107);
+        const grow = baseBeamTop - beam.getBoundingClientRect().top;
+        const shift = Math.max(0, Math.min(grow, slack));
+        if (shift > 0) stack.style.transform = 'translateY(' + shift + 'px)';
+        const beamRect = beam.getBoundingClientRect();
+        const beamTop = beamRect.top - a.top;
+        circle.style.setProperty('--cy', beamTop + 'px');
+      }
+    }
+
+    function realign() {
+      if (contentModal.classList.contains('active')) fitAndAlign(activePin);
+    }
+    window.addEventListener('resize', realign);
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => requestAnimationFrame(realign))
+        .observe(document.getElementById('interactive-app'));
+    }
+
+    // 1. CLICK START: HIDE COVER, ANIMATE PINS, SHOW INTRO MODAL
+    document.getElementById('btn-start-cover').addEventListener('click', () => {
+      coverView.classList.add('hidden');
+      
+      const pins = document.querySelectorAll('.pin-btn');
+      pins.forEach((pin, index) => {
+        setTimeout(() => {
+          pin.classList.add('animated');
+        }, index * 120);
+      });
+
+      setTimeout(() => {
+        introModal.classList.add('active');
+      }, pins.length * 120 + 300);
+    });
+
+    // 2. CLICK CONTINUE ON INTRO OVERLAY
+    document.getElementById('intro-continue-btn').addEventListener('click', () => {
+      introModal.classList.remove('active');
+    });
+
+    // 3. MAP PINS HOVER & CLICK HANDLERS
+    const icLeader = document.getElementById('leader-indiachina');
+
+    document.querySelectorAll('.pin-btn').forEach(pin => {
+      pin.addEventListener('mouseenter', (e) => {
+        if (e.currentTarget.classList.contains('viewed')) return;
+        const id = e.currentTarget.dataset.id;
+        const data = regionData[id];
+        if (data && data.highlightId) {
+          const el = document.getElementById(data.highlightId);
+          if (el) el.classList.add('active');
+          if (id === 'indiachina' && icLeader) icLeader.classList.add('active');
+        }
+      });
+
+      pin.addEventListener('mouseleave', (e) => {
+        const id = e.currentTarget.dataset.id;
+        const data = regionData[id];
+        if (data && data.highlightId) {
+          const el = document.getElementById(data.highlightId);
+          if (el) el.classList.remove('active');
+          if (id === 'indiachina' && icLeader) icLeader.classList.remove('active');
+        }
+      });
+
+      pin.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        const data = regionData[id];
+        if (data && data.highlightId) {
+          const el = document.getElementById(data.highlightId);
+          if (el) el.classList.remove('active');
+          if (id === 'indiachina' && icLeader) icLeader.classList.remove('active');
+        }
+
+        if (data) {
+          cardTitle.textContent = data.title;
+          cardBody.textContent = data.body;
+          
+          if (data.mapImg) {
+            spotlightMapBg.src = data.mapImg;
+          }
+
+          spotlightContainer.className = "spotlight-view-container " + (data.layoutClass || "");
+
+          activePin = e.currentTarget;
+          contentModal.classList.add('active');
+          fitAndAlign(activePin);
+          e.currentTarget.classList.add('viewed');
+          viewedMap.add(id);
+        }
+      });
+    });
+
+    // 4. CLOSE DIALOG - TRIGGER SWIVEL AND CLEAR SPOTLIGHT IMAGE
+    document.getElementById('close-dialog-btn').addEventListener('click', () => {
+      if (activePin) {
+        const pinBtn = activePin;
+        const pinImg = pinBtn.querySelector('.pin-img');
+        
+        pinBtn.classList.add('swiveling');
+        
+        setTimeout(() => {
+          if (pinImg) {
+            pinImg.src = 'Resources/PastedVector-43.svg';
+          }
+        }, 300);
+
+        setTimeout(() => {
+          pinBtn.classList.remove('swiveling');
+        }, 600);
+      }
+
+      contentModal.classList.remove('active');
+      
+      setTimeout(() => {
+        spotlightMapBg.src = '';
+      }, 300);
+
+      if (viewedMap.size === 7) {
+        setTimeout(() => completionModal.classList.add('active'), 600);
+      }
+    });
+
+    // 5. HEADER & COMPLETION CONTROLS
+    document.getElementById('btn-biblio').addEventListener('click', () => biblioOverlay.classList.add('active'));
+    document.getElementById('close-biblio-btn').addEventListener('click', () => biblioOverlay.classList.remove('active'));
+    
+    document.getElementById('close-completion-btn').addEventListener('click', () => {
+      completionModal.classList.remove('active');
+    });
+
+    document.getElementById('completion-biblio-btn').addEventListener('click', () => {
+      completionModal.classList.remove('active');
+      biblioOverlay.classList.add('active');
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      viewedMap.clear();
+      document.querySelectorAll('.map-hl').forEach(el => el.classList.remove('active'));
+      if (icLeader) icLeader.classList.remove('active');
+      document.querySelectorAll('.pin-btn').forEach(p => {
+        p.classList.remove('viewed');
+        p.classList.remove('animated');
+        p.classList.remove('swiveling');
+        const pinImg = p.querySelector('.pin-img');
+        if (pinImg) {
+          pinImg.src = 'Resources/PastedVector-25.svg';
+        }
+      });
+      completionModal.classList.remove('active');
+      coverView.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-exit').addEventListener('click', () => {
+      viewedMap.clear();
+      document.querySelectorAll('.map-hl').forEach(el => el.classList.remove('active'));
+      if (icLeader) icLeader.classList.remove('active');
+      document.querySelectorAll('.pin-btn').forEach(p => {
+        p.classList.remove('viewed');
+        p.classList.remove('animated');
+        p.classList.remove('swiveling');
+        const pinImg = p.querySelector('.pin-img');
+        if (pinImg) {
+          pinImg.src = 'Resources/PastedVector-25.svg';
+        }
+      });
+      contentModal.classList.remove('active');
+      introModal.classList.remove('active');
+      completionModal.classList.remove('active');
+      biblioOverlay.classList.remove('active');
+      coverView.classList.remove('hidden');
+    });
+
+    /* ── Auto height reporting to parent (Moodle) ───────────────────── */
+    (function () {
+      var lastSent = 0, queued = false;
+      function reportHeight() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () { queued = false; _report(); });
+      }
+      function _report(force) {
+        var h = Math.ceil(document.body.getBoundingClientRect().height) + 28;
+        if (h === lastSent && force !== true) return;
+        lastSent = h;
+        window.parent.postMessage({ type: 'resize', app: 'ce-interactive', height: h }, '*');
+      }
+      [150, 500, 1200, 2500, 5000].forEach(function (t) {
+        setTimeout(function () { _report(true); }, t);
+      });
+      window.addEventListener('pageshow', function () { _report(true); });
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) _report(true); });
+      window.addEventListener('message', function (e) {
+        if (e.data && (e.data.type === 'request-size' || e.data.type === 'ce-interactive-request')) _report(true);
+      });
+      if (window.ResizeObserver) {
+        new ResizeObserver(reportHeight).observe(document.body);
+      } else {
+        setInterval(reportHeight, 500);
+      }
+      window.addEventListener('resize', reportHeight);
+      window.addEventListener('load', function () {
+        reportHeight();
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { setTimeout(function () { _report(true); }, 60); });
+        }
+        setTimeout(reportHeight, 300);
+      });
+      reportHeight();
+    })();
+  </script>
+</body>
+</html>
