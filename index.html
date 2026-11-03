@@ -615,7 +615,7 @@
       padding: 3.25rem 3.5rem 2.25rem;
       text-align: center;
       width: 90%;
-      max-width: 820px;
+      max-width: 860px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.4);
       position: relative;
       margin-top: 2rem;
@@ -641,6 +641,7 @@
       margin-bottom: 1.75rem;
       font-weight: 400;
       line-height: 1.6;
+      text-wrap: balance;
     }
 
     .action-btn {
@@ -794,7 +795,7 @@
     .spotlight-view-container.layout-left.card-wide .dialog-card { width: 45%; }
     .spotlight-view-container.layout-left.card-wider .dialog-card { width: 52.5%; }
 
-    .center-modal { padding: calc(52 * var(--u)) calc(56 * var(--u)) calc(36 * var(--u)); max-width: calc(820 * var(--u)); margin-top: calc(32 * var(--u)); }
+    .center-modal { padding: calc(52 * var(--u)) calc(56 * var(--u)) calc(36 * var(--u)); max-width: calc(860 * var(--u)); margin-top: calc(32 * var(--u)); }
     .center-modal h2 { font-size: calc(18.5 * var(--u)); margin-bottom: calc(28 * var(--u)); }
     .modal-badge-graphic { top: calc(-42 * var(--u)); width: calc(84 * var(--u)); height: calc(84 * var(--u)); }
     .action-btn { padding: calc(11 * var(--u)) calc(40 * var(--u)); font-size: calc(16.5 * var(--u)); }
@@ -940,7 +941,8 @@
           class="modal-badge-graphic"
           onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 84 84\'><circle cx=\'42\' cy=\'42\' r=\'40\' fill=\'%23ffffff\' stroke=\'%23f0f2f8\' stroke-width=\'2\'/><path d=\'M42 26 L29 37 L33 37 L33 53 L51 53 L51 37 L55 37 Z\' fill=\'%232E45B8\'/></svg>';"
         >
-        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non-intervention.</h2>
+        <!-- BALANCED TEXT WITH NON-BREAKING HYPHEN -->
+        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non&#8209;intervention.</h2>
         <button class="action-btn" id="intro-continue-btn">Continue</button>
       </div>
     </div>
