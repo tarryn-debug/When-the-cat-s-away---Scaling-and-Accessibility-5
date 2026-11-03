@@ -236,43 +236,33 @@
       --glyph: #1f2e7a;
     }
 
-    /* Asset-swapping button styles for Bibliography */
-    .icon-btn-img {
-      padding: 0;
-      border: 0;
-      background: none;
-      outline: none;
-    }
-
-    .icon-btn-img img {
-      width: 100%;
-      height: 100%;
-      display: block;
+    /* Bibliography asset-based state handling inside the SVG circle */
+    .bib-svg-img {
       pointer-events: none;
     }
 
-    .icon-btn-img .state-hover,
-    .icon-btn-img .state-active {
+    .bib-svg-hover,
+    .bib-svg-active {
       display: none;
     }
 
-    .icon-btn-img:hover .state-normal,
-    .icon-btn-img:focus-visible .state-normal {
+    .icon-btn:hover .bib-svg-normal,
+    .icon-btn:focus-visible .bib-svg-normal {
       display: none;
     }
 
-    .icon-btn-img:hover .state-hover,
-    .icon-btn-img:focus-visible .state-hover {
-      display: block;
+    .icon-btn:hover .bib-svg-hover,
+    .icon-btn:focus-visible .bib-svg-hover {
+      display: inline;
     }
 
-    .icon-btn-img:active .state-normal,
-    .icon-btn-img:active .state-hover {
+    .icon-btn:active .bib-svg-normal,
+    .icon-btn:active .bib-svg-hover {
       display: none;
     }
 
-    .icon-btn-img:active .state-active {
-      display: block;
+    .icon-btn:active .bib-svg-active {
+      display: inline;
     }
 
     .stage-view {
@@ -877,14 +867,17 @@
           </svg>
         </button>
 
-        <!-- BIBLIOGRAPHY BUTTON REFERENCING ASSET FILES DIRECTLY -->
-        <button class="icon-btn icon-btn-img" id="btn-biblio" aria-label="Open Bibliography">
-          <!-- Normal state -->
-          <img class="state-normal" src="Resources/PastedVector-12.svg" alt="Bibliography">
-          <!-- Hover state -->
-          <img class="state-hover" src="Resources/Bibliography over.svg" alt="Bibliography">
-          <!-- Clicked / Active state -->
-          <img class="state-active" src="Resources/Bibliography pressed.svg" alt="Bibliography">
+        <!-- BIBLIOGRAPHY BUTTON: CIRCLE RING + EXACT EXTERNAL RESOURCE SVGS INSIDE -->
+        <button class="icon-btn" id="btn-biblio" aria-label="Open Bibliography">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <!-- Normal state = PastedVector-12.svg -->
+            <image class="bib-svg-img bib-svg-normal" href="Resources/PastedVector-12.svg" x="10" y="11.5" width="16" height="13"/>
+            <!-- Hover state = Bibliography over.svg -->
+            <image class="bib-svg-img bib-svg-hover" href="Resources/Bibliography over.svg" x="10" y="11.5" width="16" height="13"/>
+            <!-- Clicked state = Bibliography pressed.svg -->
+            <image class="bib-svg-img bib-svg-active" href="Resources/Bibliography pressed.svg" x="10" y="11.5" width="16" height="13"/>
+          </svg>
         </button>
 
         <button class="icon-btn" id="btn-exit" aria-label="Exit Interactive">
