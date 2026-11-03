@@ -80,7 +80,7 @@
     }
 
     .cover-content {
-      max-width: 460px;
+      max-width: max-content;
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -92,6 +92,7 @@
       font-weight: 700;
       color: #000000;
       line-height: 1.25;
+      white-space: nowrap;
       opacity: 0;
       transform: translateY(24px);
       animation: slideUpFade 1.6s cubic-bezier(0.25, 1, 0.4, 1) forwards;
@@ -100,10 +101,15 @@
 
     .btn-start {
       align-self: flex-start;
+      width: 152px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background-color: #2E45B8;
       color: #ffffff;
       border: none;
-      padding: 0.75rem 2.5rem;
+      padding: 0;
       font-size: 1rem;
       font-family: var(--font-main);
       font-weight: 700;
@@ -724,7 +730,7 @@
     .bib-head h2 {
       font-size: 18px;
       font-weight: 700;
-      color: var(--ink);
+      color: var(--ink)[cite: 14];
       margin: 0 0 16px;
       padding: 0;
     }
@@ -734,7 +740,7 @@
       overflow-y: auto;
       font-size: 15px;
       line-height: 1.72;
-      color: var(--ink);
+      color: var(--ink)[cite: 14];
       font-weight: 400;
       flex: 1;
     }
@@ -764,9 +770,9 @@
     .icon-btn { width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
 
     .view-cover { padding: calc(64 * var(--u)) calc(96 * var(--u)); }
-    .cover-content { max-width: calc(460 * var(--u)); gap: calc(32 * var(--u)); }
+    .cover-content { gap: calc(32 * var(--u)); }
     .cover-title { font-size: calc(48 * var(--u)); }
-    .btn-start { padding: calc(12 * var(--u)) calc(40 * var(--u)); font-size: calc(16 * var(--u)); }
+    .btn-start { width: calc(152 * var(--u)); height: calc(44 * var(--u)); font-size: calc(16 * var(--u)); }
     .cover-illustration img { max-width: calc(360 * var(--u)); }
 
     .pin-img { width: calc(21 * var(--u)); }
@@ -806,7 +812,7 @@
       .interactive-container { aspect-ratio: auto; min-height: 540px; }
       .view-cover { flex-direction: column-reverse; padding: 2.5rem 1.5rem 1.5rem; gap: 1.5rem; justify-content: center; }
       .cover-content { align-items: center; text-align: center; }
-      .cover-title { font-size: 32px; }
+      .cover-title { font-size: 32px; white-space: normal; }
       .btn-start { align-self: center; width: 100%; max-width: 200px; }
       .cover-illustration { width: 60%; }
       .dialog-card { width: 95%; padding: 1.25rem; }
