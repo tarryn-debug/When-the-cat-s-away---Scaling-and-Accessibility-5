@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>When the cat’s away</title>
+  <title>When the cat's away</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <style>
     :root {
       --color-navy-dark: #141F52;
-      --color-navy-header: #475ED1;
+      --color-navy-header: #1F2E7A;
       --color-primary-blue: #2E45B8;
       --color-teal: #1DC9A4;
       --color-pin-unviewed: #D02B2B;
@@ -29,25 +29,21 @@
       padding: 0;
     }
 
-    /* No vh units and no vertical centring: the page is exactly as tall as
-       the interactive, and reports that height to the Moodle parent (see the
-       height-reporting script at the end). 8px margin on top + 20px of room
-       below for the drop shadow. */
-    html { overflow-x: hidden; overflow-y: auto; }
-
     body {
       font-family: var(--font-main);
       background-color: #ffffff;
-      display: block;
-      margin: 8px;
-      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      margin: 0;
     }
 
     /* CONTAINER */
     .interactive-container {
       width: 100%;
       max-width: 1120px;
-      margin: 0 auto;
       aspect-ratio: 16 / 9;
       background: #ffffff;
       border-radius: 0;
@@ -55,7 +51,6 @@
       position: relative;
       overflow: hidden;
       transform: translateZ(0);
-      container-type: inline-size;
     }
 
     /* ========================================================= */
@@ -80,7 +75,7 @@
     }
 
     .cover-content {
-      max-width: max-content;
+      max-width: 460px;
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -92,7 +87,6 @@
       font-weight: 700;
       color: #000000;
       line-height: 1.25;
-      white-space: nowrap;
       opacity: 0;
       transform: translateY(24px);
       animation: slideUpFade 1.6s cubic-bezier(0.25, 1, 0.4, 1) forwards;
@@ -101,15 +95,10 @@
 
     .btn-start {
       align-self: flex-start;
-      width: 152px;
-      height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       background-color: #2E45B8;
       color: #ffffff;
       border: none;
-      padding: 0;
+      padding: 0.75rem 2.5rem;
       font-size: 1rem;
       font-family: var(--font-main);
       font-weight: 700;
@@ -188,87 +177,23 @@
     }
 
     .icon-btn {
-      --ring: #475ED1;
-      --ring-fill: transparent;
-      --glyph: #475ED1;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      border: 0;
-      background: none;
-      cursor: pointer;
-      flex: none;
-      display: block;
+      background: #ffffff;
+      border: 1.5px solid var(--color-navy-header);
+      color: var(--color-navy-header);
       border-radius: 50%;
-      transition: none;
-      position: relative;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .icon-btn svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      overflow: visible;
-    }
-
-    .icon-btn .ring {
-      fill: var(--ring-fill);
-      stroke: var(--ring);
-      stroke-width: 1;
-    }
-
-    .icon-btn .glyph {
-      fill: var(--glyph);
-    }
-
-    .icon-btn .xglyph {
-      fill: none;
-      stroke: var(--glyph);
-      stroke-width: 2;
-      stroke-linecap: butt;
-    }
-
-    .icon-btn:hover,
-    .icon-btn:focus-visible {
-      --ring: #1f2e7a;
-      --ring-fill: #ebedfa;
-      --glyph: #1f2e7a;
-      outline: none;
-    }
-
-    .icon-btn:active {
-      --ring: #1dc9a4;
-      --ring-fill: transparent;
-      --glyph: #1f2e7a;
-    }
-
-    /* Bibliography asset-based state handling inside the SVG circle */
-    .bib-svg-img {
-      pointer-events: none;
-    }
-
-    .bib-svg-hover,
-    .bib-svg-active {
-      display: none;
-    }
-
-    .icon-btn:hover .bib-svg-normal,
-    .icon-btn:focus-visible .bib-svg-normal {
-      display: none;
-    }
-
-    .icon-btn:hover .bib-svg-hover,
-    .icon-btn:focus-visible .bib-svg-hover {
-      display: inline;
-    }
-
-    .icon-btn:active .bib-svg-normal,
-    .icon-btn:active .bib-svg-hover {
-      display: none;
-    }
-
-    .icon-btn:active .bib-svg-active {
-      display: inline;
+    .icon-btn:hover, .icon-btn:focus-visible {
+      background: var(--color-bg-light);
+      border-color: var(--color-teal);
+      outline: 2px solid var(--color-teal);
     }
 
     .stage-view {
@@ -278,25 +203,9 @@
       background-color: #ffffff;
       overflow: hidden;
       perspective: 800px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      container-type: size;
-    }
-
-    /* Frame = the map's exact shape, fitted inside the stage ("contain").
-       Map, highlights and pins all live inside it, so they share one
-       coordinate system and scale together. 2.2327 = 1112.8 / 498.4 */
-    .map-canvas-frame {
-      position: relative;
-      flex: none;
-      width: min(100cqw, 100cqh * 2.2327);
-      aspect-ratio: 1112.8 / 498.4;
     }
 
     .world-map-svg {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
       display: block;
@@ -325,11 +234,10 @@
       opacity: 0.2;
     }
 
-    /* Leader Line */
+    /* RED LEADER LINE (PastedVector-27) */
     .map-leader {
       opacity: 0;
       transition: opacity 0.2s ease;
-      pointer-events: none;
     }
 
     .map-leader.active {
@@ -392,14 +300,13 @@
       100% { transform: rotateY(180deg) scale(1); }
     }
 
-    /* PIN POSITIONS: percentages of the MAP */
-    .pin-ukraine    { top: 22.4%; left: 55.3%; }
-    .pin-turkey     { top: 30.1%; left: 56.5%; }
-    .pin-georgia    { top: 27.5%; left: 59.0%; }
-    .pin-syria      { top: 32.7%; left: 58.1%; }
-    .pin-yemen      { top: 47.0%; left: 61.1%; }
-    .pin-indiachina { top: 31.7%; left: 69.9%; }
-    .pin-southchina { top: 47.0%; left: 80.9%; }
+    .pin-ukraine    { top: 25.6%; left: 55.3%; }
+    .pin-turkey     { top: 32.4%; left: 56.5%; }
+    .pin-georgia    { top: 30.1%; left: 59.0%; }
+    .pin-syria      { top: 34.7%; left: 58.1%; }
+    .pin-yemen      { top: 47.3%; left: 61.1%; }
+    .pin-indiachina { top: 34.1%; left: 69.8%; }
+    .pin-southchina { top: 47.3%; left: 80.9%; }
 
     /* ========================================================= */
     /* 3. MODALS & SPOTLIGHT OVERLAYS                            */
@@ -465,6 +372,7 @@
       display: block;
     }
 
+    /* TURKEY/GEORGIA/SYRIA/YEMEN/INDIA-CHINA WEDGE OVERLAY */
     .spotlight-wedge {
       display: none;
       position: absolute;
@@ -474,6 +382,7 @@
       pointer-events: none;
     }
 
+    /* CIRCULAR SPOTLIGHT FRAME */
     .spotlight-circle-frame {
       position: absolute;
       top: var(--cy, 33%);
@@ -510,6 +419,7 @@
       filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
     }
 
+    /* DIALOG CARD */
     .dialog-card {
       background: #ffffff;
       border-radius: 0;
@@ -540,10 +450,27 @@
       position: absolute;
       top: 1.25rem;
       right: 1.25rem;
+      background: #ffffff;
+      border: 1.5px solid var(--color-primary-blue);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      z-index: 10;
+      font-size: 1.1rem;
+      color: var(--color-primary-blue);
+      transition: all 0.2s ease;
     }
 
+    .close-card-btn:hover {
+      background: var(--color-bg-light);
+    }
+
+    /* ========================================================= */
+    /* LEFT-ALIGNED REGIONS LAYOUT STYLES                        */
+    /* ========================================================= */
     .spotlight-view-container.layout-left .spotlight-stack {
       display: block;
       padding-left: 0;
@@ -560,20 +487,13 @@
       transition: none !important;
     }
 
-    .spotlight-view-container.layout-left.turkey-layout .dialog-card {
-      position: absolute;
-      left: 6.7%;
-      bottom: 21% !important;
-      top: auto !important;
-      width: 43%;
-      max-width: none;
-    }
-
+    /* Wider card for India-China & Yemen */
     .spotlight-view-container.layout-left.card-wide .dialog-card {
       width: 45%;
       bottom: 16%;
     }
 
+    /* Widest card for South China Sea */
     .spotlight-view-container.layout-left.card-wider .dialog-card {
       width: 52.5%;
       bottom: 12%;
@@ -594,8 +514,13 @@
       transition: none !important;
     }
 
-    .spotlight-view-container.layout-left .spotlight-triangle-clip { display: none; }
-    .spotlight-view-container.layout-left .spotlight-wedge { display: block; }
+    .spotlight-view-container.layout-left .spotlight-triangle-clip { 
+      display: none; 
+    }
+    
+    .spotlight-view-container.layout-left .spotlight-wedge { 
+      display: block; 
+    }
 
     .spotlight-view-container.layout-left .spotlight-circle-frame {
       left: var(--cx, 56%);
@@ -608,14 +533,14 @@
       transform-origin: 50.7% 51.7%;
     }
 
-    /* CENTER MODAL */
+    /* CENTER MODAL (WIDENED FOR 3-LINE TEXT) */
     .center-modal {
       background: #ffffff;
       border-radius: 0;
       padding: 3.25rem 3.5rem 2.25rem;
       text-align: center;
       width: 90%;
-      max-width: 860px;
+      max-width: 820px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.4);
       position: relative;
       margin-top: 2rem;
@@ -641,7 +566,6 @@
       margin-bottom: 1.75rem;
       font-weight: 400;
       line-height: 1.6;
-      text-wrap: balance;
     }
 
     .action-btn {
@@ -661,6 +585,7 @@
       transform: translateY(-1px);
     }
 
+    /* COMPLETION MODAL CUSTOM STYLES */
     .completion-card {
       max-width: 580px;
       padding: 2.75rem 3rem 2.25rem;
@@ -693,6 +618,9 @@
       color: var(--color-navy-dark) !important;
     }
 
+    /* ========================================================= */
+    /* BIBLIOGRAPHY MODAL                                        */
+    /* ========================================================= */
     .biblio-overlay {
       position: absolute;
       inset: 0;
@@ -755,71 +683,16 @@
       overflow-wrap: break-word;
     }
 
-    /* ========================================================= */
-    /* SCALING LAYER: every size below follows the container width */
-    /* ========================================================= */
-    @property --u {
-      syntax: '<length>';
-      inherits: true;
-      initial-value: 1px;
-    }
-    .interactive-container > * { --u: 0.089286cqw; }
-
-    .app-header { padding: calc(12.8 * var(--u)) calc(28 * var(--u)); }
-    .sub-title { font-size: calc(17.5 * var(--u)); }
-    .header-buttons { gap: calc(8 * var(--u)); }
-    .icon-btn { width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
-
-    .view-cover { padding: calc(64 * var(--u)) calc(96 * var(--u)); }
-    .cover-content { gap: calc(32 * var(--u)); }
-    .cover-title { font-size: calc(48 * var(--u)); }
-    .btn-start { width: calc(152 * var(--u)); height: calc(44 * var(--u)); font-size: calc(16 * var(--u)); }
-    .cover-illustration img { max-width: calc(360 * var(--u)); }
-
-    .pin-img { width: calc(21 * var(--u)); }
-
-    .spotlight-view-container { padding-bottom: calc(36 * var(--u)); }
-    .spotlight-beam { width: calc(960 * var(--u)); }
-    .spotlight-circle-frame { width: calc(132 * var(--u)); height: calc(132 * var(--u)); border-width: calc(2 * var(--u)); }
-    .spotlight-pin-icon { width: calc(20 * var(--u)); }
-
-    .dialog-card { width: calc(960 * var(--u)); padding: calc(28 * var(--u)) calc(44 * var(--u)) calc(36 * var(--u)); }
-    .dialog-card h2 { font-size: calc(23.2 * var(--u) * (1 + (var(--fs, 1) - 1) * 0.5)); margin-bottom: calc(16 * var(--u)); padding-bottom: calc(12 * var(--u)); }
-    .dialog-card p { font-size: calc(14.08 * var(--u) * var(--fs, 1)); line-height: 1.65; color: #1a1a1a; }
-    .dialog-card p.is-scrollable { overflow-y: auto; padding-right: calc(10 * var(--u)); }
-    .dialog-card p.is-scrollable:focus-visible { outline: 3px solid var(--color-primary-blue); outline-offset: 2px; }
-    .close-card-btn { top: calc(20 * var(--u)); right: calc(20 * var(--u)); width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
-
-    .spotlight-view-container.layout-left .dialog-card { width: 43%; }
-    .spotlight-view-container.layout-left.turkey-layout .dialog-card { width: 43%; }
-    .spotlight-view-container.layout-left.card-wide .dialog-card { width: 45%; }
-    .spotlight-view-container.layout-left.card-wider .dialog-card { width: 52.5%; }
-
-    .center-modal { padding: calc(52 * var(--u)) calc(56 * var(--u)) calc(36 * var(--u)); max-width: calc(860 * var(--u)); margin-top: calc(32 * var(--u)); }
-    .center-modal h2 { font-size: calc(18.5 * var(--u)); margin-bottom: calc(28 * var(--u)); }
-    .modal-badge-graphic { top: calc(-42 * var(--u)); width: calc(84 * var(--u)); height: calc(84 * var(--u)); }
-    .action-btn { padding: calc(11 * var(--u)) calc(40 * var(--u)); font-size: calc(16.5 * var(--u)); }
-    .completion-card { max-width: calc(580 * var(--u)); padding: calc(44 * var(--u)) calc(48 * var(--u)) calc(36 * var(--u)); }
-    .completion-illustration { max-width: calc(280 * var(--u)); margin-bottom: calc(24 * var(--u)); }
-    .completion-buttons { gap: calc(20 * var(--u)); margin-top: calc(24 * var(--u)); }
-
-    .biblio-overlay { padding: calc(24 * var(--u)); }
-    .biblio-card { padding: calc(28 * var(--u)) calc(40 * var(--u)); }
-    .bib-head h2 { font-size: calc(21 * var(--u)); margin-bottom: calc(16 * var(--u)); }
-    .bib-body { padding: calc(18 * var(--u)) calc(24 * var(--u)); font-size: calc(17 * var(--u)); }
-    .bib-entry { margin-bottom: calc(14 * var(--u)); padding-left: calc(24 * var(--u)); text-indent: calc(-24 * var(--u)); }
-
     @media (max-width: 768px) {
       .interactive-container { aspect-ratio: auto; min-height: 540px; }
       .view-cover { flex-direction: column-reverse; padding: 2.5rem 1.5rem 1.5rem; gap: 1.5rem; justify-content: center; }
       .cover-content { align-items: center; text-align: center; }
-      .cover-title { font-size: 32px; white-space: normal; }
+      .cover-title { font-size: 32px; }
       .btn-start { align-self: center; width: 100%; max-width: 200px; }
       .cover-illustration { width: 60%; }
       .dialog-card { width: 95%; padding: 1.25rem; }
       .spotlight-circle-frame { width: 90px; height: 90px; }
       .spotlight-view-container.layout-left .dialog-card { width: 90%; left: 5%; }
-      .spotlight-view-container.layout-left.turkey-layout .dialog-card { width: 90%; left: 5%; bottom: 10% !important; }
       .spotlight-view-container.layout-left.card-wide .dialog-card,
       .spotlight-view-container.layout-left.card-wider .dialog-card { width: 90%; }
       .biblio-card { width: 95%; max-height: 85%; padding: 1.25rem; }
@@ -831,10 +704,10 @@
 
   <div class="interactive-container" id="interactive-app">
 
-    <!-- COVER SLIDE -->
+    <!-- COVER SLIDE (IMAGE 1: PastedVector-39) -->
     <section class="view-cover" id="cover-view">
       <div class="cover-content">
-        <h1 class="cover-title">When the cat’s away</h1>
+        <h1 class="cover-title">When the cat's away</h1>
         <button class="btn-start" id="btn-start-cover" aria-label="Start Interactive">Start</button>
       </div>
       <div class="cover-illustration">
@@ -850,86 +723,67 @@
     <!-- HEADER & MAIN MAP STAGE -->
     <header class="app-header">
       <div class="brand-section">
-        <span class="sub-title">When the cat’s away</span>
+        <span class="sub-title">When the cat's away</span>
       </div>
       <nav class="header-buttons" aria-label="Interactive Navigation">
         <button class="icon-btn" id="btn-reset" aria-label="Reset Infographic">
-          <svg viewBox="0 0 36 36">
-            <circle class="ring" cx="18" cy="18" r="16.5"/>
-            <path class="glyph" d="M18 10.5l-7 6.2v8.8h4.5v-5.5h5v5.5H25v-8.8l-7-6.2z"/>
-          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </button>
-
-        <!-- BIBLIOGRAPHY BUTTON: CIRCLE RING + EXACT EXTERNAL RESOURCE SVGS INSIDE -->
         <button class="icon-btn" id="btn-biblio" aria-label="Open Bibliography">
-          <svg viewBox="0 0 36 36">
-            <circle class="ring" cx="18" cy="18" r="16.5"/>
-            <!-- Normal state = PastedVector-12.svg -->
-            <image class="bib-svg-img bib-svg-normal" href="Resources/PastedVector-12.svg" x="10" y="11.5" width="16" height="13"/>
-            <!-- Hover state = Bibliography over.svg -->
-            <image class="bib-svg-img bib-svg-hover" href="Resources/Bibliography over.svg" x="10" y="11.5" width="16" height="13"/>
-            <!-- Clicked state = Bibliography pressed.svg -->
-            <image class="bib-svg-img bib-svg-active" href="Resources/Bibliography pressed.svg" x="10" y="11.5" width="16" height="13"/>
-          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
         </button>
-
         <button class="icon-btn" id="btn-exit" aria-label="Exit Interactive">
-          <svg viewBox="0 0 36 36">
-            <circle class="ring" cx="18" cy="18" r="16.5"/>
-            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
-            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
-          </svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </nav>
     </header>
 
     <main class="stage-view">
-      <!-- MAP CANVAS FRAME (exact map shape) -->
-      <div class="map-canvas-frame" id="map-canvas-frame">
-        <!-- BASE MAP -->
-        <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="World Map" class="world-map-svg">
+      <!-- BASE MAP -->
+      <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="World Map" class="world-map-svg">
 
-        <!-- HIGHLIGHT MAP SVGS (map coordinates 1112.8 x 498.4) -->
-        <svg class="map-highlights" viewBox="0 0 1112.8 498.4" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <defs>
-            <filter id="tint-southchina" color-interpolation-filters="sRGB">
-              <feFlood flood-color="#475ED1" result="c"/>
-              <feComposite in="c" in2="SourceAlpha" operator="in"/>
-            </filter>
-          </defs>
-          <image id="hl-ukraine"    class="map-hl" href="Resources/PastedVector-18.svg" x="589.3" y="96.7"  width="52.1" height="29.2"/>
-          <image id="hl-turkey"     class="map-hl" href="Resources/PastedVector-19.svg" x="603.3" y="134.3" width="60.2" height="23.6"/>
-          <image id="hl-syria"      class="map-hl" href="Resources/PastedVector-20.svg" x="634.5" y="153"   width="20"   height="19"/>
-          <image id="hl-georgia"    class="map-hl" href="Resources/PastedVector-21.svg" x="651"   y="133.5" width="22.1" height="9.5"/>
-          <image id="hl-yemen"      class="map-hl" href="Resources/PastedVector-22.svg" x="664.5" y="219.8" width="34.1" height="24.2"/>
-          <image id="hl-indiachina" class="map-hl" href="Resources/PastedVector-23.svg" x="769"   y="155.6" width="15.5" height="20.4"/>
-          <image id="hl-southchina" class="map-hl" href="Resources/PastedVector-28.svg" x="878.0" y="197.5" width="54.5" height="84.5" filter="url(#tint-southchina)"/>
-          <polyline id="leader-indiachina" class="map-leader" points="778,156 777.7,160.9 775,163.6" fill="none" stroke="#E3120B" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <!-- HOVER HIGHLIGHTS -->
+      <svg class="map-highlights" viewBox="0 0 1112.8 498.4" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <filter id="tint-southchina" color-interpolation-filters="sRGB">
+            <feFlood flood-color="#475ED1" result="c"/>
+            <feComposite in="c" in2="SourceAlpha" operator="in"/>
+          </filter>
+        </defs>
+        <image id="hl-ukraine"    class="map-hl" href="Resources/PastedVector-18.svg" x="589.3" y="96.7"  width="52.1" height="29.2"/>
+        <image id="hl-turkey"     class="map-hl" href="Resources/PastedVector-19.svg" x="603.3" y="134.3" width="60.2" height="23.6"/>
+        <image id="hl-syria"      class="map-hl" href="Resources/PastedVector-20.svg" x="634.5" y="153"   width="20"   height="19"/>
+        <image id="hl-georgia"    class="map-hl" href="Resources/PastedVector-21.svg" x="651"   y="133.5" width="22.1" height="9.5"/>
+        <image id="hl-yemen"      class="map-hl" href="Resources/PastedVector-22.svg" x="664.5" y="219.8" width="34.1" height="24.2"/>
+        <image id="hl-indiachina" class="map-hl" href="Resources/PastedVector-23.svg" x="769"   y="155.6" width="15.5" height="20.4"/>
+        <image id="hl-southchina" class="map-hl" href="Resources/PastedVector-28.svg" x="867.2" y="168.0"   width="54.6" height="84.1" filter="url(#tint-southchina)"/>
+        
+        <!-- PastedVector-27 Leader Line for India-China -->
+        <image id="leader-indiachina" class="map-leader" href="Resources/PastedVector-27.svg" x="773.8" y="156.8" width="4.7" height="7.2"/>
+      </svg>
 
-        <!-- MAP PINS -->
-        <button class="pin-btn pin-ukraine" data-id="ukraine" aria-label="Ukraine Conflict">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-turkey" data-id="turkey" aria-label="Turkey Intervention">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-syria" data-id="syria" aria-label="Syria Red Line">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-georgia" data-id="georgia" aria-label="Georgia War">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-yemen" data-id="yemen" aria-label="Yemen Crisis">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-indiachina" data-id="indiachina" aria-label="India-China Conflict">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-        <button class="pin-btn pin-southchina" data-id="southchina" aria-label="South China Sea">
-          <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
-        </button>
-      </div>
+      <!-- Map Pins -->
+      <button class="pin-btn pin-ukraine" data-id="ukraine" aria-label="Ukraine Conflict">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-turkey" data-id="turkey" aria-label="Turkey Intervention">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-syria" data-id="syria" aria-label="Syria Red Line">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-georgia" data-id="georgia" aria-label="Georgia War">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-yemen" data-id="yemen" aria-label="Yemen Crisis">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-indiachina" data-id="indiachina" aria-label="India-China Conflict">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
+      <button class="pin-btn pin-southchina" data-id="southchina" aria-label="South China Sea">
+        <img src="Resources/PastedVector-25.svg" alt="Pin" class="pin-img">
+      </button>
     </main>
 
     <!-- INTRO OVERLAY MODAL -->
@@ -941,8 +795,7 @@
           class="modal-badge-graphic"
           onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 84 84\'><circle cx=\'42\' cy=\'42\' r=\'40\' fill=\'%23ffffff\' stroke=\'%23f0f2f8\' stroke-width=\'2\'/><path d=\'M42 26 L29 37 L33 37 L33 53 L51 53 L51 37 L55 37 Z\' fill=\'%232E45B8\'/></svg>';"
         >
-        <!-- BALANCED TEXT WITH NON-BREAKING HYPHEN -->
-        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non&#8209;intervention.</h2>
+        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non-intervention.</h2>
         <button class="action-btn" id="intro-continue-btn">Continue</button>
       </div>
     </div>
@@ -964,6 +817,7 @@
               <img src="Resources/PastedVector-30.svg" alt="" class="spotlight-triangle-bg">
             </div>
 
+            <!-- DIAGONAL WEDGE FOR TURKEY, GEORGIA, SYRIA, YEMEN & INDIA-CHINA -->
             <svg class="spotlight-wedge" id="spotlight-wedge" aria-hidden="true">
               <polygon id="spotlight-wedge-poly" fill="#141F52"></polygon>
             </svg>
@@ -971,14 +825,7 @@
 
           <!-- DIALOG CARD -->
           <div class="dialog-card">
-            <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
-            <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close dialog">
-              <svg viewBox="0 0 36 36">
-                <circle class="ring" cx="18" cy="18" r="16.5"/>
-                <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
-                <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
-              </svg>
-            </button>
+            <button class="close-card-btn" id="close-dialog-btn" aria-label="Close dialog">&times;</button>
             <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
             <p id="card-body">In 2013, Ukraine’s pro-Russian government suspended the signing of an association agreement with the European Union, sparking mass protests by the pro-European Maidan movement, the Ukrainian revolution and the overthrow of Ukraine’s pro-Russian government. In 2014, Russia took advantage of the internal conflict to impose itself in this part of the former Soviet Union, calculating that the US would not be able to deter it. First, it annexed Crimea, a peninsula in the Black Sea. Protestors in Crimea, backed by disguised Russian soldiers, rejected the new Ukrainian government, seized the local parliament building and organised a referendum, in which, Russia claimed, Crimeans voted overwhelmingly to join Russia. Soon after pro-Russian rebels seized territory in eastern Ukraine with the help of the Russian army, which led to brutal fighting and a humanitarian crisis.</p>
           </div>
@@ -989,14 +836,7 @@
     <!-- COMPLETION OVERLAY MODAL -->
     <div class="dark-overlay" id="completion-modal">
       <div class="center-modal completion-card">
-        <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
-        <button class="icon-btn close-card-btn" id="close-completion-btn" aria-label="Close dialog">
-          <svg viewBox="0 0 36 36">
-            <circle class="ring" cx="18" cy="18" r="16.5"/>
-            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
-            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
-          </svg>
-        </button>
+        <button class="close-card-btn" id="close-completion-btn" aria-label="Close dialog">&times;</button>
         <img src="Resources/PastedVector-6.svg" alt="Collar with US Flag buckle and cheese" class="completion-illustration">
         <h2>You have completed this interactive infographic.<br>What would you like to do next?</h2>
         <div class="completion-buttons">
@@ -1009,14 +849,7 @@
     <!-- BIBLIOGRAPHY OVERLAY -->
     <div class="biblio-overlay" id="biblio-overlay">
       <div class="biblio-card">
-        <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
-        <button class="icon-btn close-card-btn" id="close-biblio-btn" aria-label="Close Bibliography">
-          <svg viewBox="0 0 36 36">
-            <circle class="ring" cx="18" cy="18" r="16.5"/>
-            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
-            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
-          </svg>
-        </button>
+        <button class="close-card-btn" id="close-biblio-btn" aria-label="Close Bibliography">&times;</button>
         <div class="bib-head">
           <h2>Bibliography</h2>
         </div>
@@ -1028,9 +861,9 @@
           <p class="bib-entry">Gilani, I. 2020. Timeline - Clashes, Standoffs between Chinese and Indian armies. <i>Anadolu Agency.</i> 16 June. Available: https://www.aa.com.tr/en/asia-pacific/timeline-clashes-standoffs-between-chinese-and-indian-armies/1879115# [2021, February 23].</p>
           <p class="bib-entry">History. 2020. <i>5-day long Russo-Georgian War begins.</i> Available: https://www.history.com/this-day-in-history/5-day-long-russo-georgian-war-begins [2021, February 23].</p>
           <p class="bib-entry">Martinez, L. 2019. Why the US Navy sails past disputed artificial islands claimed by China. <i>ABC News.</i> 6 May. Available: https://abcnews.go.com/Politics/us-navy-sails-past-disputed-artificial-islands-claimed/story?id=60993256#:~:text=In%202014%20China%20began%20massive,deployment%20of%20Chinese%20fighter%20jets [2021, February 23].</p>
-          <p class="bib-entry">Rhodes, B. 2018. Inside the White House during the Syrian ‘red line’ crisis. <i>The Atlantic.</i> 3 June. Available: https://www.theatlantic.com/international/archive/2018/06/inside-the-white-house-during-the-syrian-red-line-crisis/561887/ [2021, February 23].</p>
+          <p class="bib-entry">Rhodes, B. 2018. Inside the White House during the Syrian 'red line' crisis. <i>The Atlantic.</i> 3 June. Available: https://www.theatlantic.com/international/archive/2018/06/inside-the-white-house-during-the-syrian-red-line-crisis/561887/ [2021, February 23].</p>
           <p class="bib-entry">Turkey launches ground offensive in northern Syria. 2019. <i>BBC.</i> 9 October. Available: https://www.bbc.com/news/world-middle-east-49983357 [2021, February 23].</p>
-          <p class="bib-entry">United Nations International Children’s Emergency Fund. n.d <i>Yemen Crisis.</i> Available: https://www.unicef.org/emergencies/yemen-crisis [2021, February 23].</p>
+          <p class="bib-entry">United Nations International Children's Emergency Fund. n.d <i>Yemen Crisis.</i> Available: https://www.unicef.org/emergencies/yemen-crisis [2021, February 23].</p>
         </div>
       </div>
     </div>
@@ -1051,11 +884,11 @@
         body: "In October 2019, Turkey launched an attack in northern Syria, shortly after Donald Trump announced the withdrawal of US troops. This withdrawal left the Syrian Democratic Forces and the Kurds, its main allies in its battle against the Islamic State, without US military support. Turkey claimed the attack was an attempt to prevent a “terror corridor” along its southern border.",
         mapImg: "Resources/PastedVector-37.svg",
         highlightId: "hl-turkey",
-        layoutClass: "layout-left zoom-map turkey-layout"
+        layoutClass: "layout-left zoom-map"
       },
       syria: {
         title: "Obama’s “red line” in Syria",
-        body: "In August 2012, Barack Obama gave a warning to Syria’s president that the use of chemical weapons by the Assad government in the country’s civil war would cross a “red line”. One year later, opposition-held areas near Damascus were struck by missiles containing sarin gas. Hundreds died. Obama asked for a Congressional resolution to authorise military action in Syria but, against a background of popular opposition to such action, the resolution was never voted on. Instead, Russia negotiated a deal under which Syria agreed to destroy its chemical-weapons stockpile and to join the Chemical Weapons Convention.",
+        body: "In August 2012, Barack Obama gave a warning to Syria's president that the use of chemical weapons by the Assad government in the country's civil war would cross a “red line”. One year later, opposition-held areas near Damascus were struck by missiles containing sarin gas. Hundreds died. Obama asked for a Congressional resolution to authorise military action in Syria but, against a background of popular opposition to such action, the resolution was never voted on. Instead, Russia negotiated a deal under which Syria agreed to destroy its chemical-weapons stockpile and to join the Chemical Weapons Convention.",
         mapImg: "Resources/PastedVector-35.svg",
         highlightId: "hl-syria",
         layoutClass: "layout-left zoom-map"
@@ -1069,7 +902,7 @@
       },
       yemen: {
         title: "War and famine in Yemen",
-        body: "In 2014, a long-running conflict between the predominantly Sunni government of Yemen and rebels belonging to the mainly Shia Houthi movement—with links to Iran—erupted into a civil war. After the Houthis captured the capital, the conflict turned into another front in the contest for regional dominance between Iran and Saudi Arabia and another example of the US’ inability to restrain military adventurism in the Middle East. The ousted government appealed to the Saudis, who intervened militarily on its side, leading a coalition of eight other countries. Iran, according to a UN report, backed the Houthis with money, training and arms. The US was also caught up in the fighting after one of its warships was attacked by missiles fired, the US said, by the Houthis. Despite ceasefires in 2016 and 2020, the war ground slowly on, leading to a stalemate and what, in 2020, UNICEF called “the largest humanitarian crisis in the world”.",
+        body: "In 2014, a long-running conflict between the predominantly Sunni government of Yemen and rebels belonging to the mainly Shia Houthi movement—with links to Iran—erupted into a civil war. After the Houthis captured the capital, the conflict turned into another front in the contest for regional dominance between Iran and Saudi Arabia and another example of the US' inability to restrain military adventurism in the Middle East. The ousted government appealed to the Saudis, who intervened militarily on its side, leading a coalition of eight other countries. Iran, according to a UN report, backed the Houthis with money, training and arms. The US was also caught up in the fighting after one of its warships was attacked by missiles fired, the US said, by the Houthis. Despite ceasefires in 2016 and 2020, the war ground slowly on, leading to a stalemate and what, in 2020, UNICEF called “the largest humanitarian crisis in the world”.",
         mapImg: "Resources/PastedVector-36.svg",
         highlightId: "hl-yemen",
         layoutClass: "layout-left zoom-map card-wide wedge-outer"
@@ -1079,14 +912,14 @@
         body: "Tensions have been high between these two countries over the contours of their borders for almost half a century. With China’s growing brazenness, things escalated in 2020 when the Indian and Chinese armies clashed at the Galwan Valley, resulting in the brutal killing of 20 Indian soldiers. China claimed that the clash was a reaction to Indian forces carrying out illegal activities.",
         mapImg: "Resources/PastedVector-33.svg",
         highlightId: "hl-indiachina",
-        layoutClass: "layout-left zoom-map card-wide indiachina-layout"
+        layoutClass: "layout-left zoom-map card-wide"
       },
       southchina: {
         title: "Islands in the South China Sea",
         body: "In 2014, China started constructing artificial islands in the South China Sea. These islands have been transformed into military facilities, projecting China’s military power in the disputed maritime region and pushing back against the US naval presence in the western Pacific. The US and its allies have seen this as destabilising and intimidating.",
         mapImg: "Resources/PastedVector-32.svg",
         highlightId: "hl-southchina",
-        layoutClass: "layout-left zoom-map card-wider southchina-layout"
+        layoutClass: "layout-left zoom-map card-wider"
       }
     };
 
@@ -1122,69 +955,56 @@
       return [a - o, a + o].map(t => [px + l * Math.cos(t), py + l * Math.sin(t)]);
     }
 
-    // Measure exact tip coordinates in relation to app container
-    function getPinTipCoordinates(pin, app) {
-      const pinImg = pin.querySelector('.pin-img');
-      const appRect = app.getBoundingClientRect();
-      const pinImgRect = pinImg.getBoundingClientRect();
-      return {
-        x: (pinImgRect.left + pinImgRect.width / 2) - appRect.left,
-        y: pinImgRect.bottom - appRect.top
-      };
-    }
-
     // Left-aligned regions layout: card bottom-left, diagonal wedge connecting to the circle
     function alignLeftLayout(pin) {
       const app = document.getElementById('interactive-app');
+      const stage = document.querySelector('.stage-view');
       const stack = document.getElementById('spotlight-stack');
       const circle = document.getElementById('spotlight-circle');
       const card = document.querySelector('.dialog-card');
+      const pinImg = pin.querySelector('.pin-img');
       const wedge = document.getElementById('spotlight-wedge');
       const poly = document.getElementById('spotlight-wedge-poly');
 
       stack.style.transform = '';
 
-      const tip = getPinTipCoordinates(pin, app);
+      // Align circle's pin directly over map pin
+      const gap = pin.offsetHeight - pinImg.offsetHeight;
+      const tipX = stage.offsetLeft + pin.offsetLeft;
+      const tipY = stage.offsetTop + pin.offsetTop - gap;
       const size = circle.clientWidth;
-      const cx = tip.x - (0.508 - 0.5) * size;
-      const cy = tip.y - (0.531 - 0.5) * size;
+      const cx = tipX - (0.508 - 0.5) * size;
+      const cy = tipY - (0.531 - 0.5) * size;
       circle.style.setProperty('--cx', cx + 'px');
       circle.style.setProperty('--cy', cy + 'px');
 
-      const em = edgeMargin();
+      // Georgia: hang the card from the circle
       if (spotlightContainer.classList.contains('anchor-card')) {
-        let top = Math.min(cy - 0.17 * circle.offsetWidth, app.offsetHeight - em - card.offsetHeight);
-        card.style.top = Math.max(top, em) + 'px';
-        card.style.bottom = 'auto';
-      } else if (spotlightContainer.classList.contains('turkey-layout')) {
-        const tTop = Math.min(cy - 0.025 * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
-        card.style.setProperty('top', Math.max(tTop, em) + 'px', 'important');
-        card.style.setProperty('bottom', 'auto', 'important');
-      } else if (spotlightContainer.classList.contains('indiachina-layout') || spotlightContainer.classList.contains('southchina-layout')) {
-        const lift = spotlightContainer.classList.contains('southchina-layout') ? 0.007 : 0.004;
-        const iTop = Math.min(cy - lift * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
-        card.style.top = Math.max(iTop, em) + 'px';
+        const top = Math.min(cy - 0.17 * circle.offsetWidth, app.offsetHeight - 12 - card.offsetHeight);
+        card.style.top = top + 'px';
         card.style.bottom = 'auto';
       } else {
-        card.style.top = Math.max(em, (app.offsetHeight - card.offsetHeight) / 2) + 'px';
-        card.style.bottom = 'auto';
+        card.style.top = '';
+        card.style.bottom = '';
       }
 
+      // Calculate wedge corners and tangent lines
       const r = circle.offsetWidth / 2 - 1;
       const p2 = [card.offsetLeft + card.offsetWidth, card.offsetTop + card.offsetHeight];
-      const forceTopLeft = ['turkey-layout', 'indiachina-layout', 'southchina-layout'].some(c => spotlightContainer.classList.contains(c));
-      const cardAboveCircle = !forceTopLeft && card.offsetTop < cy - r;
+      const cardAboveCircle = card.offsetTop < cy - r;
       let p1, t1;
-      
       if (cardAboveCircle) {
         p1 = [card.offsetLeft + card.offsetWidth, card.offsetTop];
         if (spotlightContainer.classList.contains('wedge-outer')) {
+          // Yemen: wedge wraps the circle, touching its outer (right-hand) tangent
           t1 = tangentPoints(p1[0], p1[1], cx, cy, r).sort((a, b) => b[0] - a[0])[0];
         } else {
+          // Syria: wedge runs into the near side of the circle
           const vx = cx - p1[0], vy = cy - p1[1], vd = Math.hypot(vx, vy);
           t1 = [cx - vx / vd * r, cy - vy / vd * r];
         }
       } else {
+        // Turkey, Georgia, India-China: wedge leaves the card's top-left corner and touches the circle's upper tangent
         p1 = [card.offsetLeft, card.offsetTop];
         t1 = tangentPoints(p1[0], p1[1], cx, cy, r).sort((a, b) => a[1] - b[1])[0];
       }
@@ -1201,129 +1021,32 @@
         return;
       }
 
-      const app = document.getElementById('interactive-app');
+      const stage = document.querySelector('.stage-view');
       const stack = document.getElementById('spotlight-stack');
       const circle = document.getElementById('spotlight-circle');
       const card = document.querySelector('.dialog-card');
-      const beam = document.getElementById('spotlight-beam');
+      const pinImg = pin.querySelector('.pin-img');
 
       card.style.top = '';
       card.style.bottom = '';
       stack.style.transform = '';
 
-      const tip = getPinTipCoordinates(pin, app);
+      // Direct coordinates relative to the interactive container
+      const gap = pin.offsetHeight - pinImg.offsetHeight;
+      const tipX = stage.offsetLeft + pin.offsetLeft;
+      const tipY = stage.offsetTop + pin.offsetTop - gap;
+
       const size = circle.offsetWidth || 132;
-      const cx = tip.x - (0.508 - 0.5) * size;
-      const beamRect = beam.getBoundingClientRect();
-      const appRect = app.getBoundingClientRect();
-      const beamTop = beamRect.height > 0 ? (beamRect.top - appRect.top) : (app.clientHeight * 0.33);
+      const cx = tipX - (0.508 - 0.5) * size;
+      const cy = tipY - (0.531 - 0.5) * size;
 
       circle.style.setProperty('--cx', cx + 'px');
-      circle.style.setProperty('--cy', beamTop + 'px');
+      circle.style.setProperty('--cy', cy + 'px');
     }
 
-    const FS_MAX = 1.26, FS_STEP = 0.02, FS_TARGET_MIN = 1.14;
-    let globalFs = null;
-
-    function edgeMargin() {
-      return document.getElementById('interactive-app').offsetWidth * 0.0214;
-    }
-    function clearScroll() {
-      cardBody.style.maxHeight = '';
-      cardBody.classList.remove('is-scrollable');
-      cardBody.removeAttribute('tabindex');
-    }
-    function setRegionContent(id) {
-      const d = regionData[id];
-      cardTitle.textContent = d.title;
-      cardBody.textContent = d.body;
-      spotlightContainer.className = 'spotlight-view-container ' + (d.layoutClass || '');
-    }
-    function leftFits() {
-      const a = document.getElementById('interactive-app').getBoundingClientRect();
-      const r = document.querySelector('.dialog-card').getBoundingClientRect();
-      const m = edgeMargin();
-      return r.top - a.top >= m - 0.5 && a.bottom - r.bottom >= m - 0.5;
-    }
-    function bestFitFor(pin) {
-      const card = document.querySelector('.dialog-card');
-      card.style.setProperty('--fs', '1');
-      clearScroll();
-      alignSpotlightToPin(pin);
-      if (!spotlightContainer.classList.contains('layout-left')) return FS_MAX;
-      for (let fs = FS_MAX; fs > 1.001; fs -= FS_STEP) {
-        card.style.setProperty('--fs', fs.toFixed(2));
-        alignSpotlightToPin(pin);
-        if (leftFits()) return fs;
-      }
-      return 1;
-    }
-    function computeGlobalFs() {
-      const keep = { cls: spotlightContainer.className, t: cardTitle.textContent, b: cardBody.textContent };
-      let min = FS_MAX;
-      Object.keys(regionData).forEach(id => {
-        const pin = document.querySelector('.pin-btn[data-id="' + id + '"]');
-        if (!pin) return;
-        setRegionContent(id);
-        min = Math.min(min, bestFitFor(pin));
-      });
-      spotlightContainer.className = keep.cls;
-      cardTitle.textContent = keep.t;
-      cardBody.textContent = keep.b;
-      globalFs = Math.max(FS_TARGET_MIN, min);
-    }
-
-    function fitAndAlign(pin) {
-      if (!pin) return;
-      if (globalFs === null) computeGlobalFs();
-
-      const app = document.getElementById('interactive-app');
-      const card = document.querySelector('.dialog-card');
-      const stack = document.getElementById('spotlight-stack');
-      const beam = document.getElementById('spotlight-beam');
-      const circle = document.getElementById('spotlight-circle');
-      const isLeft = spotlightContainer.classList.contains('layout-left');
-
-      clearScroll();
-      let baseBeamTop = 0;
-      if (!isLeft) {
-        card.style.setProperty('--fs', '1');
-        alignSpotlightToPin(pin);
-        baseBeamTop = beam.getBoundingClientRect().top;
-      }
-      card.style.setProperty('--fs', globalFs.toFixed(3));
-      alignSpotlightToPin(pin);
-
-      if (isLeft) {
-        const maxH = app.getBoundingClientRect().height - 2 * edgeMargin();
-        if (card.offsetHeight > maxH + 0.5) {
-          const fixed = card.offsetHeight - cardBody.offsetHeight;
-          cardBody.style.maxHeight = Math.max(80, maxH - fixed) + 'px';
-          cardBody.classList.add('is-scrollable');
-          cardBody.tabIndex = 0;
-          alignSpotlightToPin(pin);
-        }
-      } else {
-        const a = app.getBoundingClientRect();
-        const r = card.getBoundingClientRect();
-        const slack = Math.max(0, a.bottom - r.bottom - app.offsetWidth * 0.0107);
-        const grow = baseBeamTop - beam.getBoundingClientRect().top;
-        const shift = Math.max(0, Math.min(grow, slack));
-        if (shift > 0) stack.style.transform = 'translateY(' + shift + 'px)';
-        const beamRect = beam.getBoundingClientRect();
-        const beamTop = beamRect.top - a.top;
-        circle.style.setProperty('--cy', beamTop + 'px');
-      }
-    }
-
-    function realign() {
-      if (contentModal.classList.contains('active')) fitAndAlign(activePin);
-    }
-    window.addEventListener('resize', realign);
-    if (window.ResizeObserver) {
-      new ResizeObserver(() => requestAnimationFrame(realign))
-        .observe(document.getElementById('interactive-app'));
-    }
+    window.addEventListener('resize', () => {
+      if (contentModal.classList.contains('active')) alignSpotlightToPin(activePin);
+    });
 
     // 1. CLICK START: HIDE COVER, ANIMATE PINS, SHOW INTRO MODAL
     document.getElementById('btn-start-cover').addEventListener('click', () => {
@@ -1346,40 +1069,11 @@
       introModal.classList.remove('active');
     });
 
-    // 3. MAP PINS HOVER & CLICK HANDLERS
-    const icLeader = document.getElementById('leader-indiachina');
-
+    // 3. MAP PINS CLICK: Swap data and update image before opening modal
     document.querySelectorAll('.pin-btn').forEach(pin => {
-      pin.addEventListener('mouseenter', (e) => {
-        if (e.currentTarget.classList.contains('viewed')) return;
-        const id = e.currentTarget.dataset.id;
-        const data = regionData[id];
-        if (data && data.highlightId) {
-          const el = document.getElementById(data.highlightId);
-          if (el) el.classList.add('active');
-          if (id === 'indiachina' && icLeader) icLeader.classList.add('active');
-        }
-      });
-
-      pin.addEventListener('mouseleave', (e) => {
-        const id = e.currentTarget.dataset.id;
-        const data = regionData[id];
-        if (data && data.highlightId) {
-          const el = document.getElementById(data.highlightId);
-          if (el) el.classList.remove('active');
-          if (id === 'indiachina' && icLeader) icLeader.classList.remove('active');
-        }
-      });
-
       pin.addEventListener('click', (e) => {
         const id = e.currentTarget.dataset.id;
         const data = regionData[id];
-        if (data && data.highlightId) {
-          const el = document.getElementById(data.highlightId);
-          if (el) el.classList.remove('active');
-          if (id === 'indiachina' && icLeader) icLeader.classList.remove('active');
-        }
-
         if (data) {
           cardTitle.textContent = data.title;
           cardBody.textContent = data.body;
@@ -1391,8 +1085,8 @@
           spotlightContainer.className = "spotlight-view-container " + (data.layoutClass || "");
 
           activePin = e.currentTarget;
+          alignSpotlightToPin(activePin);
           contentModal.classList.add('active');
-          fitAndAlign(activePin);
           e.currentTarget.classList.add('viewed');
           viewedMap.add(id);
         }
@@ -1444,8 +1138,6 @@
 
     document.getElementById('btn-reset').addEventListener('click', () => {
       viewedMap.clear();
-      document.querySelectorAll('.map-hl').forEach(el => el.classList.remove('active'));
-      if (icLeader) icLeader.classList.remove('active');
       document.querySelectorAll('.pin-btn').forEach(p => {
         p.classList.remove('viewed');
         p.classList.remove('animated');
@@ -1460,61 +1152,44 @@
     });
 
     document.getElementById('btn-exit').addEventListener('click', () => {
-      viewedMap.clear();
-      document.querySelectorAll('.map-hl').forEach(el => el.classList.remove('active'));
-      if (icLeader) icLeader.classList.remove('active');
-      document.querySelectorAll('.pin-btn').forEach(p => {
-        p.classList.remove('viewed');
-        p.classList.remove('animated');
-        p.classList.remove('swiveling');
-        const pinImg = p.querySelector('.pin-img');
-        if (pinImg) {
-          pinImg.src = 'Resources/PastedVector-25.svg';
-        }
-      });
-      contentModal.classList.remove('active');
-      introModal.classList.remove('active');
-      completionModal.classList.remove('active');
-      biblioOverlay.classList.remove('active');
-      coverView.classList.remove('hidden');
+      if (confirm('You are about to close this tab. Do you want to continue?')) {
+        window.close();
+      }
     });
 
-    /* ── Auto height reporting to parent (Moodle) ───────────────────── */
+    // 6. HOVER HIGHLIGHTS & LEADER LINE
     (function () {
-      var lastSent = 0, queued = false;
-      function reportHeight() {
-        if (queued) return;
-        queued = true;
-        requestAnimationFrame(function () { queued = false; _report(); });
-      }
-      function _report(force) {
-        var h = Math.ceil(document.body.getBoundingClientRect().height) + 28;
-        if (h === lastSent && force !== true) return;
-        lastSent = h;
-        window.parent.postMessage({ type: 'resize', app: 'ce-interactive', height: h }, '*');
-      }
-      [150, 500, 1200, 2500, 5000].forEach(function (t) {
-        setTimeout(function () { _report(true); }, t);
+      const hl = id => document.getElementById('hl-' + id);
+      const icLeader = document.getElementById('leader-indiachina');
+
+      document.querySelectorAll('.pin-btn').forEach(pin => {
+        const id = pin.dataset.id;
+        const on = () => { 
+          if (!pin.classList.contains('viewed')) {
+            hl(id).classList.add('active');
+            if (id === 'indiachina' && icLeader) {
+              icLeader.classList.add('active');
+            }
+          }
+        };
+        const off = () => { 
+          hl(id).classList.remove('active');
+          if (id === 'indiachina' && icLeader) {
+            icLeader.classList.remove('active');
+          }
+        };
+
+        pin.addEventListener('mouseenter', on);
+        pin.addEventListener('focus', on);
+        pin.addEventListener('mouseleave', off);
+        pin.addEventListener('blur', off);
+        pin.addEventListener('click', off);
       });
-      window.addEventListener('pageshow', function () { _report(true); });
-      document.addEventListener('visibilitychange', function () { if (!document.hidden) _report(true); });
-      window.addEventListener('message', function (e) {
-        if (e.data && (e.data.type === 'request-size' || e.data.type === 'ce-interactive-request')) _report(true);
+
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        document.querySelectorAll('.map-hl').forEach(el => el.classList.remove('active'));
+        if (icLeader) icLeader.classList.remove('active');
       });
-      if (window.ResizeObserver) {
-        new ResizeObserver(reportHeight).observe(document.body);
-      } else {
-        setInterval(reportHeight, 500);
-      }
-      window.addEventListener('resize', reportHeight);
-      window.addEventListener('load', function () {
-        reportHeight();
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(function () { setTimeout(function () { _report(true); }, 60); });
-        }
-        setTimeout(reportHeight, 300);
-      });
-      reportHeight();
     })();
   </script>
 </body>
