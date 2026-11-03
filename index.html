@@ -534,22 +534,8 @@
       position: absolute;
       top: 1.25rem;
       right: 1.25rem;
-      background: #ffffff;
-      border: 1.5px solid var(--color-primary-blue);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
-      font-size: 1.1rem;
-      color: var(--color-primary-blue);
-      transition: all 0.2s ease;
-    }
-
-    .close-card-btn:hover {
-      background: var(--color-bg-light);
+      z-index: 10;
     }
 
     .spotlight-view-container.layout-left .spotlight-stack {
@@ -738,7 +724,7 @@
     .bib-head h2 {
       font-size: 18px;
       font-weight: 700;
-      color: var(--ink)[cite: 14];
+      color: var(--ink);
       margin: 0 0 16px;
       padding: 0;
     }
@@ -748,7 +734,7 @@
       overflow-y: auto;
       font-size: 15px;
       line-height: 1.72;
-      color: var(--ink)[cite: 14];
+      color: var(--ink);
       font-weight: 400;
       flex: 1;
     }
@@ -795,7 +781,7 @@
     .dialog-card p { font-size: calc(14.08 * var(--u) * var(--fs, 1)); line-height: 1.65; color: #1a1a1a; }
     .dialog-card p.is-scrollable { overflow-y: auto; padding-right: calc(10 * var(--u)); }
     .dialog-card p.is-scrollable:focus-visible { outline: 3px solid var(--color-primary-blue); outline-offset: 2px; }
-    .close-card-btn { top: calc(20 * var(--u)); right: calc(20 * var(--u)); width: calc(36 * var(--u)); height: calc(36 * var(--u)); font-size: calc(20 * var(--u)); }
+    .close-card-btn { top: calc(20 * var(--u)); right: calc(20 * var(--u)); width: calc(36 * var(--u)); height: calc(36 * var(--u)); }
 
     .spotlight-view-container.layout-left .dialog-card { width: 43%; }
     .spotlight-view-container.layout-left.turkey-layout .dialog-card { width: 43%; }
@@ -977,7 +963,14 @@
 
           <!-- DIALOG CARD -->
           <div class="dialog-card">
-            <button class="close-card-btn" id="close-dialog-btn" aria-label="Close dialog">&times;</button>
+            <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
+            <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close dialog">
+              <svg viewBox="0 0 36 36">
+                <circle class="ring" cx="18" cy="18" r="16.5"/>
+                <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
+                <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
+              </svg>
+            </button>
             <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
             <p id="card-body">In 2013, Ukraine’s pro-Russian government suspended the signing of an association agreement with the European Union, sparking mass protests by the pro-European Maidan movement, the Ukrainian revolution and the overthrow of Ukraine’s pro-Russian government. In 2014, Russia took advantage of the internal conflict to impose itself in this part of the former Soviet Union, calculating that the US would not be able to deter it. First, it annexed Crimea, a peninsula in the Black Sea. Protestors in Crimea, backed by disguised Russian soldiers, rejected the new Ukrainian government, seized the local parliament building and organised a referendum, in which, Russia claimed, Crimeans voted overwhelmingly to join Russia. Soon after pro-Russian rebels seized territory in eastern Ukraine with the help of the Russian army, which led to brutal fighting and a humanitarian crisis.</p>
           </div>
@@ -988,7 +981,14 @@
     <!-- COMPLETION OVERLAY MODAL -->
     <div class="dark-overlay" id="completion-modal">
       <div class="center-modal completion-card">
-        <button class="close-card-btn" id="close-completion-btn" aria-label="Close dialog">&times;</button>
+        <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
+        <button class="icon-btn close-card-btn" id="close-completion-btn" aria-label="Close dialog">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
+            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
+          </svg>
+        </button>
         <img src="Resources/PastedVector-6.svg" alt="Collar with US Flag buckle and cheese" class="completion-illustration">
         <h2>You have completed this interactive infographic.<br>What would you like to do next?</h2>
         <div class="completion-buttons">
@@ -1001,7 +1001,14 @@
     <!-- BIBLIOGRAPHY OVERLAY -->
     <div class="biblio-overlay" id="biblio-overlay">
       <div class="biblio-card">
-        <button class="close-card-btn" id="close-biblio-btn" aria-label="Close Bibliography">&times;</button>
+        <!-- UPDATED EXIT BUTTON TO MATCH IMAGE 2 -->
+        <button class="icon-btn close-card-btn" id="close-biblio-btn" aria-label="Close Bibliography">
+          <svg viewBox="0 0 36 36">
+            <circle class="ring" cx="18" cy="18" r="16.5"/>
+            <line class="xglyph" x1="12.5" y1="12.5" x2="23.5" y2="23.5"/>
+            <line class="xglyph" x1="23.5" y1="12.5" x2="12.5" y2="23.5"/>
+          </svg>
+        </button>
         <div class="bib-head">
           <h2>Bibliography</h2>
         </div>
